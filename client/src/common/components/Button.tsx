@@ -7,14 +7,14 @@ type ButtonProps = {
     children: ReactNode;
 } & ButtonHTMLAttributes<HTMLButtonElement>;
 
-const Button = ({ variant = "primary", children, ...rest }: ButtonProps) => {
+const Button = ({ variant = "primary", children, className, ...rest }: ButtonProps) => {
     const variantStyles = {
         "primary": "bg-[#eb614b] text-white rounded",
         "secondary": "bg-blue-500 text-white rounded",
         "tertiary": "border border-[#eb614b] rounded hover:"
     }
     return (
-        <button className={twMerge(classNames("w-[104px] h-8", variantStyles[variant]))} {...rest}>{children}</button>
+        <button className={twMerge(classNames("px-2 py-1 cursor-pointer", className, variantStyles[variant]))} {...rest}>{children}</button>
     )
 }
 
