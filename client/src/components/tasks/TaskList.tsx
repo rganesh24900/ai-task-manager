@@ -3,73 +3,78 @@ import Button from "../../common/components/Button";
 import { useTaskPopup } from "../../hooks/tasks/useTaskPopup";
 import useTasks from "../../hooks/tasks/useTasks";
 import type { Task } from "../../types";
-import { cn } from "../../common/utils";
 
 const TaskList: React.FC = () => {
-    const { data: tasks, isLoading, isError, error } = useTasks();
-    const { confirm, ConfirmDialog } = useTaskPopup();
+  const { data: tasks, isLoading, isError, error } = useTasks();
+  const { confirm, ConfirmDialog } = useTaskPopup();
 
-    if (isLoading) return <p className="text-gray-500">Loading tasks...</p>;
-    if (isError) return <p className="text-red-500">Error: {(error as Error).message}</p>;
+  if (isLoading) return <p className="text-gray-500 text-center">Loading tasks...</p>;
+  if (isError) return <p className="text-red-500 text-center">Error: {(error as Error).message}</p>;
+  if (!tasks?.length) return <p className="text-gray-400 text-center">No tasks found</p>;
 
-    return (
-        <div className="flex flex-col gap-3 p-4">
-            {/* Header with Create button */}
-            <div className="flex justify-between items-center mb-4">
-                <h2 className="text-xl font-semibold text-gray-800">Tasks</h2>
-                <Button
-                    onClick={() => confirm("CREATE", null)}
-                    variant="primary"
-                >
-                    + Create Task
-                </Button>
+  return (
+    <div className="min-h-screen bg-gradient-to-b from-purple-200 to-white p-6">
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-2xl font-semibold text-gray-800">Tasks</h1>
+        <Button
+          onClick={() => confirm("CREATE")}
+          className="px-4 py-2 rounded-lg  text-white font-medium shadow-md hover:shadow-lg transition-all"
+        >
+          + Create Task
+        </Button>
+      </div>
+
+      <div className="flex flex-col gap-4">
+        {tasks.map((task: Task) => (
+          <div
+            key={task.id}
+            className="bg-white rounded-2xl shadow-sm hover:shadow-md transition-all p-5 flex flex-col gap-2"
+          >
+            <div className="flex justify-between items-start">
+              <div>
+                <h3 className="text-lg font-semibold text-gray-800">{task.title}</h3>
+                <p className="text-gray-600">{task.description}</p>
+              </div>
+              <Button onClick={() => confirm("UPDATE", task)} variant="primary" className="px-3 py-1">
+                Edit
+              </Button>
             </div>
 
-            {/* Tasks List */}
-            {(!tasks || tasks.length === 0) ? (
-                <p className="text-gray-400">No tasks found</p>
-            ) : (
-                tasks.map((task: Task) => (
-                    <div
-                        key={task.id}
-                        className="border rounded-lg p-3 shadow-sm hover:shadow-md transition bg-white"
-                    >
-                        <div className="flex justify-between items-start">
-                            <h3 className="text-lg font-semibold text-gray-800">{task.title}</h3>
-                            <Button
-                                variant="secondary"
-                                className="w-[104px]"
-                                onClick={() => confirm("UPDATE", task)}
-                            >
-                                Edit
-                            </Button>
-                        </div>
+            <div className="flex items-center justify-between text-sm text-gray-500 mt-2">
+              <span
+                className={`px-2 py-1 rounded-md text-xs font-semibold ${
+                  task.priority === "High"
+                    ? "bg-red-100 text-red-600"
+                    : task.priority === "Medium"
+                    ? "bg-orange-100 text-orange-600"
+                    : "bg-green-100 text-green-600"
+                }`}
+              >
+                {task.priority}
+              </span>
+              {task.reminderAt && (
+                <span className="flex items-center gap-1">
+                  ⏰ {new Date(task.reminderAt).toLocaleString()}
+                </span>
+              )}
+            </div>
 
-                        <p className="text-gray-600 mt-1">{task.description}</p>
-
-                        <div className="mt-2 flex justify-between text-sm text-gray-500">
-                            <span>Priority: {task.priority}</span>
-                            {task.reminderAt && (
-                                <span>⏰ {new Date(task.reminderAt).toLocaleString()}</span>
-                            )}
-                        </div>
-
-                        {task.subtasks?.length && (
-                            <ul className="mt-2 ml-4 list-disc text-gray-500">
-                                {task.subtasks.map((st) => (
-                                    <li key={st.id}>
-                                        <div>{st.title} <span className={cn("text-xs text-yellow-100", { "text-green-600": st.completed })}>{st.completed ? "Completed" : "Pending"}</span></div>
-                                    </li>
-                                ))}
-                            </ul>
-                        )}
-                    </div>
-                ))
+            {task.subtasks && task.subtasks?.length > 0 && (
+              <ul className="mt-3 ml-4 list-disc text-gray-500 space-y-1">
+                {task.subtasks.map((st, i) => (
+                  <li key={i} className="flex items-center gap-2">
+                    <input type="checkbox" checked={st.completed} readOnly />
+                    <span className={st.completed ? "line-through text-gray-400" : ""}>{st.title}</span>
+                  </li>
+                ))}
+              </ul>
             )}
-
-            <ConfirmDialog />
-        </div>
-    );
+          </div>
+        ))}
+      </div>
+      <ConfirmDialog />
+    </div>
+  );
 };
 
 export default TaskList;

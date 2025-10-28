@@ -4,6 +4,6 @@
     padding: 14px;
 }
 
-body{
-    background: blueviolet;
+body {
+  @apply bg-gradient-to-b from-purple-200 to-white p-6
 }

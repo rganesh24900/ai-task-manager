@@ -9,7 +9,7 @@ type ButtonProps = {
 
 const Button = ({ variant = "primary", children, className, ...rest }: ButtonProps) => {
     const variantStyles = {
-        "primary": "bg-[#eb614b] text-white rounded",
+        "primary": "bg-gradient-to-r from-purple-500 to-pink-500 rounded-md",
         "secondary": "bg-blue-500 text-white rounded",
         "tertiary": "border border-[#eb614b] rounded hover:"
     }
