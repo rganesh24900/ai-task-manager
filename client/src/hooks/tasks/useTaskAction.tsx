@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { createTask, getTasks, updateTask } from '../../api/tasks'
+import { createTask, deleteTask, getTasks, updateTask } from '../../api/tasks'
 import type { ActionType, Task } from '../../types'
 
 const taskActions: Record<ActionType, { api: (payload: Task) => Promise<any> }> = {
@@ -8,6 +8,9 @@ const taskActions: Record<ActionType, { api: (payload: Task) => Promise<any> }> 
     },
     UPDATE: {
         api: (payload: Task) => updateTask(payload)
+    },
+    DELETE: {
+        api: (payload: Task) => deleteTask(payload)
     }
 }
 

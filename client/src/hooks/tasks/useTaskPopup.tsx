@@ -20,7 +20,7 @@ export const useTaskPopup = () => {
 
 
     const handleSubmit = (data: Task) => {
-        console.log({data})
+        console.log({ data })
         action && actionTaskMutate({ payload: { ...data }, action })
         setOpen(false)
     };

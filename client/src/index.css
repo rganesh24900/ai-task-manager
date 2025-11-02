@@ -1,9 +1,7 @@
 @import "tailwindcss";
 
-:root{
-    padding: 14px;
-}
 
 body {
-  @apply bg-gradient-to-b from-purple-200 to-white p-6
+  @apply bg-linear-to-b from-purple-200 to-white p-6;
+  height:100vh
 }

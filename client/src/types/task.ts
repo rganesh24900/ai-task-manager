@@ -12,17 +12,19 @@ export interface Subtask {
     title: string;
     completed: boolean;
 }
-
+// src/types.ts
 export interface Task {
-    id?: number;
-    title: string;
-    description?: string;
-    reminderAt?: string | Date;
-    priority: Priority;
-    subtasks?: Subtask[];
-    completed?: boolean;
-    createdAt?: string;
-    updatedAt?: string;
+  id?: string;
+  title: string;
+  description?: string;
+  priority: "low" | "medium" | "high";
+  status: "pending" | "in_progress" | "completed";
+  dueDate?: string; // ISO date (converted from DateTime)
+  time?: string; // "HH:mm" format
+  recurrence?: "none" | "daily" | "weekly" | "monthly";
+  assignees?: string[]; // array of user IDs or names
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export type ActionType = "CREATE" | "UPDATE" | "DELETE"

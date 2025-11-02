@@ -1,6 +1,7 @@
 import type { ElementType } from "react";
-import TaskCreateForm from "../../components/tasks/TaskCreateForm";
+import TaskCreateForm from "../../components/tasks/CreateTaskForm";
 import EditTaskForm from "../../components/tasks/EditTaskForm";
+import DeleteTaskConfirm from "../../components/tasks/DeleteTaskConfirm";
 
 
 export const taskPopup: Record<string, { component: ElementType, props?: any, header: string, confirmText: string, cancelText: string }> = {
@@ -16,10 +17,10 @@ export const taskPopup: Record<string, { component: ElementType, props?: any, he
         confirmText: "Update",
         cancelText: "Close",
     },
-    // DELETE: {
-    //     component: DeleteTaskConfirm,
-    //     header: "Delete Task?",
-    //     confirmText: "Yes, Delete",
-    //     cancelText: "No",
-    // },
+    DELETE: {
+        component: DeleteTaskConfirm,
+        header: "Delete Task?",
+        confirmText: "Yes, Delete",
+        cancelText: "No",
+    },
 };

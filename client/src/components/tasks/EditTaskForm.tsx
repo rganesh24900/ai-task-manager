@@ -21,7 +21,6 @@ const EditTaskForm: React.FC<EditTaskFormProps> = ({ formData, setopen, onSubmit
         setTask((prev) => ({ ...prev, [name]: value }));
     };
 
-    console.log({task})
 
     const handleSubtaskChange = (
         index: number,

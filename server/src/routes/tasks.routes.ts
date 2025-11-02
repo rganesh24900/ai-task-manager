@@ -1,7 +1,7 @@
 import express from 'express'
 import prisma from '../../prisma/client'
 import { AuthedRequest, requireAuth } from '../middleware/auth.middleware';
-import { updateTask } from '../controllers/tasks.controller';
+import { deleteTask, parseTask, updateTask } from '../controllers/tasks.controller';
 
 const router = express.Router()
 
@@ -10,6 +10,7 @@ router.get("/", requireAuth, async (req: AuthedRequest, res) => {
         const tasks = await prisma.task.findMany({ where: { userId: req.user?.id } });
         res.json(tasks);
     } catch (err) {
+        console.log({err})
         res.status(500).json({ error: 'Failed to fetch tasks' });
     }
 });
@@ -33,5 +34,9 @@ router.post("/", requireAuth, async (req: AuthedRequest, res) => {
 })
 
 router.put("/:id", requireAuth, updateTask)
+
+router.delete("/:id", requireAuth, deleteTask)
+
+router.post("/parseTask", requireAuth, parseTask)
 
 export default router;

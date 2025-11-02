@@ -1,5 +1,4 @@
 // prisma/schema.prisma
-
 generator client {
     provider = "prisma-client-js"
 }
@@ -24,10 +23,16 @@ model Task {
     user        User      @relation(fields: [userId], references: [id])
     title       String
     description String?
+    dueDate     DateTime? // from LLM (e.g., "tomorrow")
+    dueTime     String? // optional: "15:00"
     reminderAt  DateTime?
     priority    Priority  @default(Low)
-    subtasks    Json?
+    recurrence  String? // e.g., "Daily", "Weekly"
+    assignees   Json? // e.g., ["Meera", "Raj"]
+    subtasks    Json? // e.g., [{title, completed}]
+    tags        Json? // optional array field
     completed   Boolean   @default(false)
+    llmParsed   Boolean   @default(false)
     createdAt   DateTime  @default(now())
     updatedAt   DateTime  @updatedAt
 }
