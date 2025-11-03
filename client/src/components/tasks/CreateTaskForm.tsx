@@ -22,6 +22,7 @@ const CreateTaskForm: React.FC<CreateTaskFormProps> = ({ onSubmit }) => {
         parseTask(nlInput, {
             onSuccess: (parsedData) => {
                 // Merge parsed values into form fields
+                console.log({ parsedData })
                 setFormData((prev) => ({
                     ...prev,
                     ...parsedData,
@@ -58,7 +59,7 @@ const CreateTaskForm: React.FC<CreateTaskFormProps> = ({ onSubmit }) => {
                     onChange={(e) => setNlInput(e.target.value)}
                     className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm"
                 />
-                <Button type="button" onClick={handleSmartParse} disabled={parsing}>
+                <Button className="whitespace-nowrap" type="button" onClick={handleSmartParse} disabled={parsing}>
                     {parsing ? "Parsing..." : "✨ Smart Fill"}
                 </Button>
             </div>
@@ -95,20 +96,42 @@ const CreateTaskForm: React.FC<CreateTaskFormProps> = ({ onSubmit }) => {
             </select>
 
             {/* 🗓️ Due Date */}
-            <input
-                type="datetime-local"
-                name="dueDate"
-                value={formData.dueDate?.slice(0, 16) || ""}
-                onChange={handleChange}
-                className="w-full border rounded-lg px-3 py-2"
-            />
-
-            <Button
-                type="submit"
-                className="w-full bg-blue-600 text-white rounded-lg py-2 hover:bg-blue-700"
-            >
-                Create Task
-            </Button>
+            <div className="flex gap-4">
+                <label className="flex-1 text-sm font-medium text-gray-700">
+                    Due Date:
+                    <input
+                        type="date"
+                        name="dueDate"
+                        value={formData.dueDate?.split("T")[0] || ""}
+                        onChange={(e) => {
+                            const date = e.target.value;
+                            setFormData({
+                                ...formData,
+                                dueDate: date ? `${date}T${formData.time || "00:00"}:00.000Z` : "",
+                            });
+                        }}
+                        className="w-full border rounded-lg px-3 py-2 mt-1"
+                    />
+                </label>
+                <label className="flex-1 text-sm font-medium text-gray-700">
+                    Time:
+                    <input
+                        type="time"
+                        name="time"
+                        value={formData.time || ""}
+                        onChange={(e) => {
+                            const time = e.target.value;
+                            const date = formData.dueDate?.split("T")[0];
+                            setFormData({
+                                ...formData,
+                                time,
+                                dueDate: date ? `${date}T${time}:00.000Z` : formData.dueDate,
+                            });
+                        }}
+                        className="w-full border rounded-lg px-3 py-2 mt-1"
+                    />
+                </label>
+            </div>
         </form>
     );
 };

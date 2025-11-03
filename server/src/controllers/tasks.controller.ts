@@ -62,31 +62,49 @@ export const parseTask = async (req: Request, res: Response) => {
         const { text } = req.body;
 
         const prompt = `
-Extract the following fields from the input and return JSON only.
+You are a smart task parser. Your job is to extract structured data from the input text.
 
-Fields:
+**Today's date:** ${new Date().toISOString().split("T")[0]}
+
+Interpret natural language expressions like "tomorrow", "next Monday", "in 2 days", or "at 10am"
+into proper ISO 8601 date-time format.
+
+Return ONLY JSON in the following structure:
 {
   "title": string,
-  "dueDate": ISO date (YYYY-MM-DD) or null,
-  "time": 24-hour HH:mm or null,
   "priority": "Low" | "Medium" | "High" | null,
-  "assignees": string[] or [],
-  "recurrence": "Daily" | "Weekly" | "Monthly" | null
+  "dueDate": string | null, // ISO format "YYYY-MM-DDTHH:mm:ssZ"
+  "time": string | null,    // 24-hour "HH:mm"
+  "recurrence": "none" | "daily" | "weekly" | "monthly" | null,
+  "assignees": string[] | []
 }
 
-User input: "${text}"
+Example:
+Input: "Team sync meeting with Alex next Tuesday at 3pm"
+Output:
+{
+  "title": "Team sync meeting with Alex",
+  "priority": null,
+  "dueDate": "2025-11-11T15:00:00Z",
+  "time": "15:00",
+  "recurrence": null,
+  "assignees": ["Alex"]
+}
+
+Now extract structured details for:
+"${text}"
 `;
 
         const response = await client.chat.completions.create({
             model: "gpt-4o-mini",
             temperature: 0.2,
             messages: [
-                { role: "system", content: "You are a task parser." },
+                { role: "system", content: "You are an intelligent date-aware task parser." },
                 { role: "user", content: prompt },
             ],
         });
 
-        const message = response.choices[0].message.content;
+        const message = response.choices[0].message.content?.trim();
         const parsed = JSON.parse(message || "{}");
 
         return res.status(200).json(parsed);
@@ -95,4 +113,5 @@ User input: "${text}"
         return res.status(500).json({ error: "Failed to parse task" });
     }
 };
+
 
