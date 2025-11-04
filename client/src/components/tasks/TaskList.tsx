@@ -83,34 +83,12 @@ const TaskList: React.FC = () => {
                 >
                   {task.priority}
                 </span>
-                {task.reminderAt && (
+                {task.dueDate && (
                   <span className="flex items-center gap-1">
-                    ⏰ {new Date(task.reminderAt).toLocaleString()}
+                    ⏰ {new Date(task.dueDate).toLocaleString()}
                   </span>
                 )}
               </div>
-
-              {task.subtasks && task.subtasks.length > 0 && (
-                <ul className="mt-3 ml-3 list-disc text-gray-500 space-y-1 text-sm">
-                  {task.subtasks.map((st, i) => (
-                    <li key={i} className="flex items-center gap-2">
-                      <input
-                        type="checkbox"
-                        checked={st.completed}
-                        readOnly
-                        className="accent-purple-600"
-                      />
-                      <span
-                        className={
-                          st.completed ? "line-through text-gray-400" : ""
-                        }
-                      >
-                        {st.title}
-                      </span>
-                    </li>
-                  ))}
-                </ul>
-              )}
             </div>
           </div>
         ))}

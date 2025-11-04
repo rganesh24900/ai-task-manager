@@ -1,11 +1,11 @@
 -- CreateEnum
-CREATE TYPE "Priority" AS ENUM ('LOW', 'MEDIUM', 'HIGH');
+CREATE TYPE "Priority" AS ENUM ('Low', 'Medium', 'High');
 
 -- CreateTable
 CREATE TABLE "User" (
     "id" TEXT NOT NULL,
     "email" TEXT NOT NULL,
-    "password" TEXT,
+    "password" TEXT NOT NULL,
     "name" TEXT,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
@@ -18,9 +18,10 @@ CREATE TABLE "Task" (
     "userId" TEXT NOT NULL,
     "title" TEXT NOT NULL,
     "description" TEXT,
-    "reminderAt" TIMESTAMP(3),
-    "priority" "Priority" NOT NULL DEFAULT 'LOW',
-    "subtasks" JSONB,
+    "dueDate" TIMESTAMP(3),
+    "priority" "Priority" NOT NULL DEFAULT 'Low',
+    "recurrence" TEXT,
+    "assignees" JSONB,
     "completed" BOOLEAN NOT NULL DEFAULT false,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,

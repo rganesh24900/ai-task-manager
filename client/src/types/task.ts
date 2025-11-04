@@ -17,7 +17,7 @@ export interface Task {
   id?: string;
   title: string;
   description?: string;
-  priority: "low" | "medium" | "high";
+  priority: "Low" | "Medium" | "High";
   status: "pending" | "in_progress" | "completed";
   dueDate?: string; // ISO date (converted from DateTime)
   time?: string; // "HH:mm" format

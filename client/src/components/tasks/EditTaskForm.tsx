@@ -24,11 +24,24 @@ const EditTaskForm: React.FC<EditTaskFormProps> = ({ formData, setopen, onSubmit
 
 
 
-    const handleSubmit = async (e: React.FormEvent) => {
+    useEffect(() => {
+        if (formData) {
+            const formattedDate = formData.dueDate
+                ? new Date(formData.dueDate).toISOString().slice(0, 16)
+                : "";
+            setTask({ ...formData, dueDate: formattedDate });
+        }
+    }, [formData]);
+
+    const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        if (!task.title) return alert("Title is required");
-        onSubmit(task)
+        const payload = {
+            ...task,
+            dueDate: task.dueDate ? new Date(task.dueDate).toISOString() : undefined,
+        };
+        onSubmit(payload);
     };
+
 
     return (
         <form

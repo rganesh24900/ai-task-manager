@@ -10,7 +10,6 @@ router.get("/", requireAuth, async (req: AuthedRequest, res) => {
         const tasks = await prisma.task.findMany({ where: { userId: req.user?.id } });
         res.json(tasks);
     } catch (err) {
-        console.log({err})
         res.status(500).json({ error: 'Failed to fetch tasks' });
     }
 });
@@ -21,9 +20,9 @@ router.post("/", requireAuth, async (req: AuthedRequest, res) => {
         if (!userId) {
             return res.status(401).json({ error: "Unauthorized" });
         }
-        const { title, description, reminderAt, priority } = req.body?.data
+        const { title, description, dueDate, priority } = req.body?.data
         const task = await prisma.task.create({
-            data: { userId, title, description, reminderAt: reminderAt ? new Date(reminderAt) : null, priority }
+            data: { userId, title, description, dueDate: dueDate ? new Date(dueDate) : null, priority }
         })
         return res.status(201).json(task);
     } catch (error) {

@@ -6,18 +6,28 @@ export interface AuthedRequest extends Request {
     user?: { id: string }
 }
 
-export const requireAuth = (req: AuthedRequest, res: Response, next: NextFunction) => {
+export const requireAuth = async (req: AuthedRequest, res: Response, next: NextFunction) => {
     try {
         const token = req.cookies?.token;
-        console.log({token})
-        if (!token) return res.status(401).json({ message: 'No token provided' });
+
+        if (!token) return res.status(401).json({ message: "No token provided" });
 
         const decoded = verify(token) as { userId: string };
-        req.user = { id: decoded.userId };
 
+        // 🔍 Verify user exists in DB
+        const user = await prisma.user.findUnique({
+            where: { id: decoded.userId },
+            select: { id: true },
+        });
+
+        if (!user) {
+            return res.status(401).json({ message: "User not found (invalid or deleted)" });
+        }
+
+        req.user = { id: user.id };
         next();
     } catch (err) {
-        console.error('Auth error:', err);
-        res.status(401).json({ message: 'Unauthorized' });
+        console.error("Auth error:", err);
+        res.status(401).json({ message: "Unauthorized" });
     }
 };
