@@ -62,44 +62,53 @@ export const parseTask = async (req: Request, res: Response) => {
         const { text } = req.body;
 
         const prompt = `
-Extract the following fields and return **pure JSON only** — do NOT include markdown or explanations.
+You are a smart AI task parser and planner.
 
-Fields:
+Given a user input describing a task, extract the structured task details and
+suggest meaningful subtasks and next actions.
+
+Return ONLY valid JSON in the following format:
+
 {
   "title": string,
-  "dueDate": ISO date (YYYY-MM-DDTHH:mm:ssZ) representing the *next occurrence* if a relative time (like "tomorrow" or "at 6pm weekly") is mentioned,
-  "time": 24-hour HH:mm or null,
+  "description": string | null,
+  "dueDate": ISO date string (YYYY-MM-DDTHH:mm:ssZ) or null,
+  "time": "HH:mm" | null,
   "priority": "Low" | "Medium" | "High" | null,
   "assignees": string[] or [],
-  "recurrence": "Daily" | "Weekly" | "Monthly" | null
+  "recurrence": "Daily" | "Weekly" | "Monthly" | null,
+  "suggestedSubtasks": [
+    { "title": string, "dueInDays": number | null }
+  ],
+  "suggestedNextActions": string[]
 }
 
-If no specific date is mentioned but a recurrence or time is present, infer the *next logical date* starting from the current day.
-For example:
-- "tomorrow at 10am" → dueDate = tomorrow's date with 10:00 time
-- "at 6pm weekly" → dueDate = today's date at 18:00 if time not passed, else tomorrow or next week
-- "next Monday" → dueDate = actual next Monday
+Rules:
+- If user says “tomorrow”, “at 6pm weekly”, or similar → infer the next logical due date.
+- If no due date but time exists → assume today's or next occurrence.
+- Always include realistic subtasks and next actions.
+- Use only valid JSON — no markdown formatting, no \`\`\`json fences.
+
 User input: "${text}"
 `;
 
-
         const response = await client.chat.completions.create({
             model: "gpt-4o-mini",
-            temperature: 0.2,
+            temperature: 0.3,
             messages: [
-                { role: "system", content: "You are an intelligent date-aware task parser." },
+                { role: "system", content: "You are a date-aware AI task planner." },
                 { role: "user", content: prompt },
             ],
         });
 
-        const message = response.choices[0].message.content?.trim();
-        console.log({ message })
-        const parsed = JSON.parse(message || "{}");
+        let message = response.choices[0].message.content?.trim() || "{}";
+        message = message.replace(/```json|```/g, "").trim(); // clean if model adds fences
+        const parsed = JSON.parse(message);
 
         return res.status(200).json(parsed);
     } catch (err) {
         console.error("Parse Error:", err);
-        return res.status(500).json({ error: "Failed to parse task" });
+        return res.status(500).json({ error: "Failed to parse or generate task suggestions" });
     }
 };
 
