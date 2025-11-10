@@ -7,11 +7,6 @@ export type TaskStatus = 'completed' | 'pending';
 
 export type Priority = "Low" | "Medium" | "High"
 
-export interface Subtask {
-    id?: number;
-    title: string;
-    completed: boolean;
-}
 // src/types.ts
 export interface Task {
   id?: string;
@@ -25,6 +20,7 @@ export interface Task {
   assignees?: string[]; // array of user IDs or names
   createdAt?: string;
   updatedAt?: string;
+  completed?: boolean
 }
 
 export type ActionType = "CREATE" | "UPDATE" | "DELETE"
