@@ -2,6 +2,8 @@ import { RequestHandler } from "express";
 import prisma from "../../prisma/client";
 import type { Request, Response } from "express";
 import OpenAI from "openai";
+import chrono from "chrono-node";
+
 
 const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
@@ -57,6 +59,7 @@ export const deleteTask: RequestHandler = async (req, res) => {
 
 
 
+
 export const parseTask = async (req: Request, res: Response) => {
     try {
         const { text } = req.body;
@@ -84,10 +87,11 @@ Return ONLY valid JSON in the following format:
 }
 
 Rules:
-- If user says “tomorrow”, “at 6pm weekly”, or similar → infer the next logical due date.
-- If no due date but time exists → assume today's or next occurrence.
+- Parse temporal hints like “tomorrow”, “next Monday”, “at 6pm weekly”, etc.
+- Always produce valid ISO date strings for dueDate (UTC or local).
+- If no due date but time exists, assume today or the next occurrence of that time.
 - Always include realistic subtasks and next actions.
-- Use only valid JSON — no markdown formatting, no \`\`\`json fences.
+- Only return JSON, no markdown formatting or fences.
 
 User input: "${text}"
 `;
@@ -102,8 +106,21 @@ User input: "${text}"
         });
 
         let message = response.choices[0].message.content?.trim() || "{}";
-        message = message.replace(/```json|```/g, "").trim(); // clean if model adds fences
+        message = message.replace(/```json|```/g, "").trim();
+
         const parsed = JSON.parse(message);
+
+        if (parsed.dueDate && isNaN(Date.parse(parsed.dueDate))) {
+            const chronoDate = chrono.parseDate(parsed.dueDate, new Date());
+            parsed.dueDate = chronoDate ? chronoDate.toISOString() : null;
+        }
+
+        if (!parsed.dueDate && parsed.time) {
+            const now = new Date();
+            const [hours, minutes] = parsed.time.split(":").map(Number);
+            now.setHours(hours, minutes, 0, 0);
+            parsed.dueDate = now.toISOString();
+        }
 
         return res.status(200).json(parsed);
     } catch (err) {
@@ -111,5 +128,6 @@ User input: "${text}"
         return res.status(500).json({ error: "Failed to parse or generate task suggestions" });
     }
 };
+
 
 

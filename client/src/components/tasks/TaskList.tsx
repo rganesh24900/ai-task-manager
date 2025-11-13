@@ -1,12 +1,11 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import Button from "../../common/components/Button";
 import { useTaskPopup } from "../../hooks/tasks/useTaskPopup";
 import useTasks from "../../hooks/tasks/useTasks";
 import useLogout from "../../hooks/auth/useLogout";
 import type { Task } from "../../types";
-import { LogOut } from "lucide-react";
+import { Trash, LogOut, Calendar, Bell } from "lucide-react";
 import TaskFilter from "./TaskFilter";
-import TaskItem from "./TaskItem";
 
 const TaskList: React.FC = () => {
   const { data: tasks, isLoading, isError, error } = useTasks();
@@ -16,14 +15,13 @@ const TaskList: React.FC = () => {
   const [filter, setFilter] = useState("all");
   const [search, setSearch] = useState("");
   const [sort, setSort] = useState("none");
+  const [reminders, setReminders] = useState<Task[]>([]);
 
-
+  // 🔍 Filter & Sort logic
   const filteredTasks = useMemo(() => {
     if (!tasks) return [];
-
     let result = [...tasks];
 
-    // Search
     if (search) {
       result = result.filter(
         (t) =>
@@ -32,14 +30,11 @@ const TaskList: React.FC = () => {
       );
     }
 
-    // Filter
     if (filter === "completed") result = result.filter((t) => t.completed);
     else if (filter === "pending") result = result.filter((t) => !t.completed);
-    else if (["High", "Medium", "Low"].includes(filter)) {
+    else if (["High", "Medium", "Low"].includes(filter))
       result = result.filter((t) => t.priority === filter);
-    }
 
-    // Sort
     if (sort === "dueDateAsc")
       result.sort(
         (a, b) => new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime()
@@ -55,6 +50,45 @@ const TaskList: React.FC = () => {
 
     return result;
   }, [tasks, filter, search, sort]);
+
+  // 🔔 Ask for Notification permission once
+  useEffect(() => {
+    if ("Notification" in window && Notification.permission === "default") {
+      Notification.requestPermission();
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!tasks?.length) return;
+
+    const checkReminders = () => {
+      const now = new Date();
+      const upcoming = tasks.filter((task) => {
+        if (!task.dueDate) return false;
+        const due = new Date(task.dueDate);
+        const diff = due.getTime() - now.getTime();
+        return diff > 0 && diff <= 30 * 60 * 1000; // within 30 minutes
+      });
+
+      setReminders(upcoming);
+
+      // Show notifications
+      if ("Notification" in window && Notification.permission === "granted") {
+        upcoming.forEach((task) => {
+          new Notification("Upcoming Task Reminder", {
+            body: `${task.title} is due at ${new Date(
+              task.dueDate || ""
+            ).toLocaleTimeString()}`,
+            icon: "/bell-icon.png", // optional icon
+          });
+        });
+      }
+    };
+
+    checkReminders();
+    const interval = setInterval(checkReminders, 60 * 1000);
+    return () => clearInterval(interval);
+  }, [tasks]);
 
   return (
     <div className="min-h-screen p-6 bg-gradient-to-br from-purple-50 to-pink-50">
@@ -82,12 +116,30 @@ const TaskList: React.FC = () => {
         </div>
       </div>
 
-      {/* Filters & Search */}
+      {/* Filter & Search */}
       <TaskFilter
         onSearchChange={setSearch}
         onFilterChange={setFilter}
         onSortChange={setSort}
       />
+
+      {/* 🔔 Reminder Bar */}
+      {reminders.length > 0 && tasks?.length && (
+        <div className="mb-6 bg-yellow-50 border border-yellow-200 rounded-xl p-4 flex items-center gap-3 text-yellow-800">
+          <Bell className="w-5 h-5" />
+          <span className="font-medium">
+            {reminders.length} task(s) due soon:
+          </span>
+          {reminders.map((task) => (
+            <span
+              key={task.id}
+              className="bg-yellow-100 px-2 py-1 rounded-md text-sm font-semibold"
+            >
+              {task.title} ({new Date(task.dueDate || "").toLocaleTimeString()})
+            </span>
+          ))}
+        </div>
+      )}
 
       {/* Task grid */}
       {isLoading && (
@@ -104,7 +156,56 @@ const TaskList: React.FC = () => {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {filteredTasks.map((task: Task) => (
-          <TaskItem task={task} confirm={confirm}/>
+          <div
+            key={task.id}
+            className="bg-white rounded-2xl shadow-sm hover:shadow-md transition-all p-5 border border-gray-100"
+          >
+            <div className="flex justify-between items-start mb-4">
+              <div>
+                <h3 className="text-lg font-semibold text-gray-800">
+                  {task.title}
+                </h3>
+                <p className="text-gray-600 text-sm mt-1">
+                  {task.description || "—"}
+                </p>
+              </div>
+
+              <div className="flex gap-2">
+                <Button
+                  onClick={() => confirm("UPDATE", task)}
+                  className="px-3 py-1 text-sm rounded-md bg-purple-50 text-purple-700 hover:bg-purple-100"
+                >
+                  Edit
+                </Button>
+                <Button
+                  onClick={() => confirm("DELETE", task)}
+                  className="px-3 py-1 flex items-center gap-1 text-sm bg-red-50 text-red-600 hover:bg-red-100"
+                >
+                  <Trash className="w-4 h-4" />
+                  Delete
+                </Button>
+              </div>
+            </div>
+
+            <div className="flex justify-between items-center text-xs text-gray-500 mt-2">
+              <span
+                className={`px-2 py-1 rounded-md font-semibold ${task.priority === "High"
+                  ? "bg-red-100 text-red-600"
+                  : task.priority === "Medium"
+                    ? "bg-yellow-100 text-yellow-600"
+                    : "bg-green-100 text-green-600"
+                  }`}
+              >
+                {task.priority}
+              </span>
+              {task.dueDate && (
+                <span className="flex items-center gap-1">
+                  <Calendar className="w-3 h-3" />{" "}
+                  {new Date(task.dueDate).toLocaleString()}
+                </span>
+              )}
+            </div>
+          </div>
         ))}
       </div>
 

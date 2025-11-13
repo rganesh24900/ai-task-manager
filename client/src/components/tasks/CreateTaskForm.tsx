@@ -170,13 +170,6 @@ const CreateTaskForm: React.FC<CreateTaskFormProps> = ({ onSubmit }) => {
                                 ) : null}
                             </div>
                         )}
-
-                        <Button
-                            type="submit"
-                            className="w-full bg-blue-600 hover:bg-blue-700 text-white rounded-lg py-2 transition-all"
-                        >
-                            Create Task
-                        </Button>
                     </Form>
                 );
             }}
