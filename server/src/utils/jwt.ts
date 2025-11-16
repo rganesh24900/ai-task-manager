@@ -4,7 +4,7 @@ import jwt, { JwtPayload, SignOptions } from 'jsonwebtoken'
 dotEnv.config();
 
 const JWT_SECRET = process.env.JWT_SECRET!;
-const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || "1h" as SignOptions["expiresIn"];
+const JWT_EXPIRES_IN: SignOptions['expiresIn'] = process.env.JWT_EXPIRES_IN ?? "1h";
 
 if (!JWT_SECRET) {
     throw new Error('JWT_SECRET is not set in env')
