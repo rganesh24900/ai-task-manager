@@ -1,7 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { AppJwtPayload, verifyJWT } from "../utils/jwt";
-import prisma from "../../prisma/client";
-
+import prisma from "../prisma/client";
 export interface AuthedRequest extends Request {
     user?: { id: string }
 }

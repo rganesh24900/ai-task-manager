@@ -1,5 +1,5 @@
 import { RequestHandler } from "express";
-import prisma from "../../prisma/client";
+import prisma from "../prisma/client";
 import type { Request, Response } from "express";
 import OpenAI from "openai";
 import chrono from "chrono-node";

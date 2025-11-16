@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import { validationResult } from 'express-validator';
 import { compare, hashPassword } from '../utils/password';
 import { signJWT } from '../utils/jwt';
-import prisma from '../../prisma/client';
+import prisma from '../prisma/client';
 
 export const register = async (req: Request, res: Response) => {
     try {

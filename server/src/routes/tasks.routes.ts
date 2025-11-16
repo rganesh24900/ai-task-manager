@@ -1,7 +1,7 @@
 import express from 'express'
-import prisma from '../../prisma/client'
 import { AuthedRequest, requireAuth } from '../middleware/auth.middleware';
 import { deleteTask, parseTask, updateTask } from '../controllers/tasks.controller';
+import prisma from '../prisma/client';
 
 const router = express.Router()
 
