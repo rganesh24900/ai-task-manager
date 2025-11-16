@@ -14,12 +14,16 @@ app.use(
     cors({
         origin: [
             "http://localhost:5173",
-            "https://ai-task-manager-43pxg2yqu-rganesh24900s-projects.vercel.app/",
+            "https://ai-task-manager-47bilwsxp-rganesh24900s-projects.vercel.app"
         ],
         credentials: true,
     })
 );
 
+app.use((req, res, next) => {
+    res.header("Access-Control-Allow-Credentials", "true");
+    next();
+});
 
 app.use("/api/tasks", taskRoutes);
 app.use("/api/auth", authRoutes);
