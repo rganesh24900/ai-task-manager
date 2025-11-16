@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import { AppJwtPayload, verify } from "../utils/jwt";
+import { AppJwtPayload, verifyJWT } from "../utils/jwt";
 import prisma from "../../prisma/client";
 
 export interface AuthedRequest extends Request {
@@ -12,7 +12,7 @@ export const requireAuth = async (req: AuthedRequest, res: Response, next: NextF
 
         if (!token) return res.status(401).json({ message: "No token provided" });
 
-        const decoded = verify(token) as { userId: string };
+        const decoded = verifyJWT(token) as { userId: string };
 
         // 🔍 Verify user exists in DB
         const user = await prisma.user.findUnique({
