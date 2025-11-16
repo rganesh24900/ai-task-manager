@@ -47,11 +47,11 @@ export const register = async (req: Request, res: Response) => {
         }
 
         // 6️⃣ Set cookie
-        res.cookie('token', token, {
+        res.cookie("token", token, {
             httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
-            sameSite: 'lax',
-            maxAge: 60 * 60 * 1000, // 1 hour
+            sameSite: "none",
+            secure: process.env.NODE_ENV === "production",
+            maxAge: 1000 * 60 * 60,
         });
 
         return res.status(201).json({ user });
@@ -81,12 +81,13 @@ export const login = async (req: Request, res: Response) => {
 
         const token = signJWT({ userId: user.id, email: user.email })
         const safeUser = { id: user.id, email: user.email, name: user.name, createdAt: user.createdAt };
-        res.cookie('token', token, {
+        res.cookie("token", token, {
             httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
-            sameSite: 'lax',
-            maxAge: 60 * 60 * 1000,
+            sameSite: "none",
+            secure: process.env.NODE_ENV === "production",
+            maxAge: 1000 * 60 * 60,
         });
+
         res.json({ message: 'Logged in successfully' });
     } catch (error) {
         console.error(error);
