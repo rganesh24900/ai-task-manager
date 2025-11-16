@@ -4,7 +4,7 @@ node_modules
 
 /src/generated/prisma
 
-package-lock.json
+/package-lock.json
 
 node-modules
 .env*
