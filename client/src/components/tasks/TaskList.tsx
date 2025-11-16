@@ -37,11 +37,11 @@ const TaskList: React.FC = () => {
 
     if (sort === "dueDateAsc")
       result.sort(
-        (a, b) => new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime()
+        (a, b) => new Date(a.dueDate || "").getTime() - new Date(b.dueDate || "").getTime()
       );
     else if (sort === "dueDateDesc")
       result.sort(
-        (a, b) => new Date(b.dueDate).getTime() - new Date(a.dueDate).getTime()
+        (a, b) => new Date(b.dueDate || "").getTime() - new Date(a.dueDate || "").getTime()
       );
     else if (sort === "priority") {
       const order = { High: 1, Medium: 2, Low: 3 };

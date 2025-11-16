@@ -10,7 +10,7 @@ const useToggleComplete = () => {
             return res.data;
         },
         onSuccess: () => {
-            queryClient.invalidateQueries(["tasks"]);
+            queryClient.invalidateQueries({ queryKey: ["tasks"] });
         },
         onError: (err) => {
             console.error("Failed to toggle task", err);

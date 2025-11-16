@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { taskPopup } from "../../utils/tasks";
 import Modal from "../../common/components/Modal";
 import useTaskAction from "./useTaskAction";
@@ -16,7 +16,7 @@ export const useTaskPopup = () => {
     const [open, setOpen] = useState(false);
     const [formData, setFormData] = useState<any>(null);
     const [action, setAction] = useState<ActionType | "">("");
-    const { mutate: actionTaskMutate, isLoading } = useTaskAction();
+    const { mutate: actionTaskMutate } = useTaskAction();
 
 
     const handleSubmit = (data: Task) => {

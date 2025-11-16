@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import useParseTask from "../../hooks/useParseTask";
 import Button from "../../common/components/Button";
+import useParseTask from "../../hooks/tasks/useParseTask";
 
 interface Props {
     onParsed: (data: any) => void;

@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { createTask, deleteTask, getTasks, updateTask } from '../../api/tasks'
+import { createTask, deleteTask, updateTask } from '../../api/tasks'
 import type { ActionType, Task } from '../../types'
 
 const taskActions: Record<ActionType, { api: (payload: Task) => Promise<any> }> = {
@@ -19,7 +19,8 @@ const useTaskAction = () => {
     return useMutation({
         mutationFn: async ({ payload, action }: { payload: Task, action: ActionType }) => taskActions[action].api(payload),
         onSuccess: async () => {
-            queryClient.invalidateQueries(["tasks"]);
+            queryClient.invalidateQueries({ queryKey: ["tasks"] });
+
         },
         onError: (err) => {
             console.error("Task action failed:", err);

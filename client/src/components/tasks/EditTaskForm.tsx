@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import type { Task, Subtask } from "../../types";
+import type { Task } from "../../types";
 
 interface EditTaskFormProps {
     formData: Task;
@@ -7,7 +7,7 @@ interface EditTaskFormProps {
     onSubmit: (data: Task) => void;
 }
 
-const EditTaskForm: React.FC<EditTaskFormProps> = ({ formData, setopen, onSubmit }) => {
+const EditTaskForm: React.FC<EditTaskFormProps> = ({ formData, onSubmit }) => {
     const [task, setTask] = useState<Task>(formData);
     console.log({task})
 
