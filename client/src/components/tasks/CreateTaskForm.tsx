@@ -79,7 +79,7 @@ const CreateTaskForm: React.FC<CreateTaskFormProps> = ({ onSubmit }) => {
                         <div className="flex gap-2 items-center">
                             <input
                                 type="text"
-                                placeholder="E.g. 'High priority meeting with John tomorrow at 5pm'"
+                                placeholder="E.g. 'Plan a 3 day Goa trip'"
                                 value={nlInput}
                                 onChange={(e) => setNlInput(e.target.value)}
                                 className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm"
