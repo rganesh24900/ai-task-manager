@@ -30,7 +30,6 @@ app.use(
     })
 );
 
-app.options("*", cors());
 
 app.use("/api/tasks", taskRoutes);
 app.use("/api/auth", authRoutes);
