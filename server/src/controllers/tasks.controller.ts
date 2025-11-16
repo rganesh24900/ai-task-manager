@@ -63,9 +63,12 @@ export const deleteTask: RequestHandler = async (req, res) => {
 export const parseTask = async (req: Request, res: Response) => {
     try {
         const { text } = req.body;
+        const today = new Date().toISOString();
 
         const prompt = `
 You are a smart AI task parser and planner.
+
+Today’s date is: ${today}
 
 Given a user input describing a task, extract the structured task details and
 suggest meaningful subtasks and next actions.
@@ -88,13 +91,15 @@ Return ONLY valid JSON in the following format:
 
 Rules:
 - Parse temporal hints like “tomorrow”, “next Monday”, “at 6pm weekly”, etc.
-- Always produce valid ISO date strings for dueDate (UTC or local).
-- If no due date but time exists, assume today or the next occurrence of that time.
-- Always include realistic subtasks and next actions.
-- Only return JSON, no markdown formatting or fences.
+- When interpreting dates like "tomorrow", use today’s date: ${today}.
+- Ensure dueDate is ALWAYS after today.
+- Always produce valid ISO date strings.
+- If no dueDate but time exists, set to today at the given time.
+- Only return JSON.
 
 User input: "${text}"
 `;
+
 
         const response = await client.chat.completions.create({
             model: "gpt-4o-mini",
