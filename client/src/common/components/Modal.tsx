@@ -34,7 +34,7 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, header, footer, children
 
             {/* Modal Box */}
             <div
-                className="relative z-10 bg-white dark:bg-gray-900 rounded-2xl shadow-lg w-full max-w-lg mx-4 overflow-hidden"
+                className="relative z-10 bg-[#fafafa] dark:bg-gray-900 rounded-2xl shadow-lg w-full max-w-lg mx-4 overflow-hidden"
             >
                 {/* Header */}
                 {header && (

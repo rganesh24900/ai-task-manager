@@ -17,7 +17,7 @@ const TaskList: React.FC = () => {
   const [sort, setSort] = useState("none");
   const [reminders, setReminders] = useState<Task[]>([]);
 
-  // 🔍 Filter & Sort logic
+  // ---------- FILTER & SORT ----------
   const filteredTasks = useMemo(() => {
     if (!tasks) return [];
     let result = [...tasks];
@@ -51,13 +51,14 @@ const TaskList: React.FC = () => {
     return result;
   }, [tasks, filter, search, sort]);
 
-  // 🔔 Ask for Notification permission once
+  // Permissions
   useEffect(() => {
     if ("Notification" in window && Notification.permission === "default") {
       Notification.requestPermission();
     }
   }, []);
 
+  // ---------- REMINDERS ----------
   useEffect(() => {
     if (!tasks?.length) return;
 
@@ -65,21 +66,16 @@ const TaskList: React.FC = () => {
       const now = new Date();
       const upcoming = tasks.filter((task) => {
         if (!task.dueDate) return false;
-        const due = new Date(task.dueDate);
-        const diff = due.getTime() - now.getTime();
-        return diff > 0 && diff <= 30 * 60 * 1000; // within 30 minutes
+        const diff = new Date(task.dueDate).getTime() - now.getTime();
+        return diff > 0 && diff <= 30 * 60 * 1000;
       });
 
       setReminders(upcoming);
 
-      // Show notifications
       if ("Notification" in window && Notification.permission === "granted") {
         upcoming.forEach((task) => {
-          new Notification("Upcoming Task Reminder", {
-            body: `${task.title} is due at ${new Date(
-              task.dueDate || ""
-            ).toLocaleTimeString()}`,
-            icon: "/bell-icon.png", // optional icon
+          new Notification("Upcoming Task", {
+            body: `${task.title} is due at ${new Date(task.dueDate||"").toLocaleTimeString()}`
           });
         });
       }
@@ -91,116 +87,118 @@ const TaskList: React.FC = () => {
   }, [tasks]);
 
   return (
-    <div className="min-h-screen p-6 bg-gradient-to-br from-purple-50 to-pink-50">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
-        <h1 className="text-3xl font-bold text-gray-800 tracking-tight">
-          Task Manager
+    <div className="min-h-screen p-6 bg-[#fafafa]">
+      {/* PAGE HEADER */}
+      {/* PAGE HEADER */}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
+        <h1 className="text-3xl font-semibold text-gray-900 tracking-tight">
+          Tasks
         </h1>
 
         <div className="flex gap-3">
+          {/* CREATE TASK */}
           <Button
+            variant="primary"
             onClick={() => confirm("CREATE")}
-            className="px-5 py-2 rounded-xl bg-gradient-to-r from-purple-600 to-pink-500 hover:opacity-90 text-white font-semibold shadow-md hover:shadow-lg transition-all"
+            className="px-5 py-2"
           >
             + Create Task
-          </Button>
-
-          <Button
-            onClick={() => handleLogout()}
-            className="px-5 py-2 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-800 font-medium shadow-sm transition-all flex items-center gap-2"
-          >
-            <LogOut className="w-4 h-4" />
-            Logout
           </Button>
         </div>
       </div>
 
-      {/* Filter & Search */}
+
+      {/* FILTER SECTION */}
       <TaskFilter
         onSearchChange={setSearch}
         onFilterChange={setFilter}
         onSortChange={setSort}
       />
 
-      {/* 🔔 Reminder Bar */}
-      {reminders.length > 0 && tasks?.length && (
-        <div className="mb-6 bg-yellow-50 border border-yellow-200 rounded-xl p-4 flex items-center gap-3 text-yellow-800">
+      {/* REMINDER BAR */}
+      {reminders.length > 0 && (
+        <div className="mb-6 bg-yellow-50 border border-yellow-200 rounded-lg p-4 flex items-center gap-3 text-yellow-800">
           <Bell className="w-5 h-5" />
           <span className="font-medium">
-            {reminders.length} task(s) due soon:
+            {reminders.length} tasks due soon:
           </span>
           {reminders.map((task) => (
             <span
               key={task.id}
-              className="bg-yellow-100 px-2 py-1 rounded-md text-sm font-semibold"
+              className="bg-yellow-100 px-2 py-1 rounded-md text-xs font-medium"
             >
-              {task.title} ({new Date(task.dueDate || "").toLocaleTimeString()})
+              {task.title}
             </span>
           ))}
         </div>
       )}
 
-      {/* Task grid */}
-      {isLoading && (
-        <p className="text-gray-500 text-center mt-10">Loading tasks...</p>
-      )}
+      {/* LOADING / EMPTY */}
+      {isLoading && <p className="text-center text-gray-500 mt-10">Loading...</p>}
       {isError && (
-        <p className="text-red-500 text-center mt-10">
+        <p className="text-center text-red-500 mt-10">
           Error: {(error as Error).message}
         </p>
       )}
       {!isLoading && !isError && !tasks?.length && (
-        <p className="text-gray-400 text-center mt-10">No tasks found</p>
+        <p className="text-center text-gray-400 mt-10">No tasks found</p>
       )}
 
+      {/* TASK GRID */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {filteredTasks.map((task: Task) => (
+        {filteredTasks.map((task) => (
           <div
             key={task.id}
-            className="bg-white rounded-2xl shadow-sm hover:shadow-md transition-all p-5 border border-gray-100"
+            className="bg-[#fafafa] border border-gray-200 rounded-xl p-5 shadow-sm hover:shadow-md transition-all"
           >
             <div className="flex justify-between items-start mb-4">
               <div>
-                <h3 className="text-lg font-semibold text-gray-800">
-                  {task.title}
-                </h3>
+                <h3 className="text-lg font-medium text-gray-900">{task.title}</h3>
                 <p className="text-gray-600 text-sm mt-1">
                   {task.description || "—"}
                 </p>
               </div>
 
               <div className="flex gap-2">
+                {/* EDIT */}
                 <Button
+                  variant="tertiary"
                   onClick={() => confirm("UPDATE", task)}
-                  className="px-3 py-1 text-sm rounded-md bg-purple-50 text-purple-700 hover:bg-purple-100"
+                  className="px-3 py-1 text-xs"
                 >
                   Edit
                 </Button>
+
+                {/* DELETE */}
                 <Button
+                  variant="danger"
                   onClick={() => confirm("DELETE", task)}
-                  className="px-3 py-1 flex items-center gap-1 text-sm bg-red-50 text-red-600 hover:bg-red-100"
+                  className="px-3 py-1 text-xs flex items-center gap-1"
                 >
                   <Trash className="w-4 h-4" />
                   Delete
                 </Button>
               </div>
+
             </div>
 
-            <div className="flex justify-between items-center text-xs text-gray-500 mt-2">
+            {/* PRIORITY + DATE */}
+            <div className="flex justify-between items-center text-xs text-gray-500">
               <span
-                className={`px-2 py-1 rounded-md font-semibold ${task.priority === "High"
-                  ? "bg-red-100 text-red-600"
-                  : task.priority === "Medium"
-                    ? "bg-yellow-100 text-yellow-600"
-                    : "bg-green-100 text-green-600"
+                className={`px-2 py-1 rounded-md font-medium
+              ${task.priority === "High"
+                    ? "bg-red-100 text-red-600"
+                    : task.priority === "Medium"
+                      ? "bg-yellow-100 text-yellow-700"
+                      : "bg-green-100 text-green-700"
                   }`}
               >
                 {task.priority}
               </span>
+
               {task.dueDate && (
                 <span className="flex items-center gap-1">
-                  <Calendar className="w-3 h-3" />{" "}
+                  <Calendar className="w-3 h-3" />
                   {new Date(task.dueDate).toLocaleString()}
                 </span>
               )}
@@ -212,6 +210,7 @@ const TaskList: React.FC = () => {
       <ConfirmDialog />
     </div>
   );
+
 };
 
 export default TaskList;

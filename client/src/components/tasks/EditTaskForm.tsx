@@ -54,6 +54,7 @@ const EditTaskForm: React.FC<EditTaskFormProps> = ({ formData, onSubmit }) => {
                     name="title"
                     value={task.title}
                     onChange={handleChange}
+                    className="grow"
                     required
                 />
             </label>

@@ -31,7 +31,7 @@ const TaskFilter = ({ onFilterChange, onSearchChange, onSortChange }: TaskFilter
     };
 
     return (
-        <div className="flex flex-col sm:flex-row justify-between items-center gap-3 mb-6 bg-white rounded-xl shadow-sm p-4 border border-gray-100">
+        <div className="flex flex-col sm:flex-row justify-between items-center gap-3 mb-6 bg-[#fafafa] rounded-xl shadow-sm p-4 border border-gray-100">
             <div className="flex gap-3 items-center w-full sm:w-auto">
                 <div className="relative flex-1 sm:flex-none">
                     <Search className="absolute left-3 top-2.5 w-4 h-4 text-gray-400" />
@@ -48,7 +48,7 @@ const TaskFilter = ({ onFilterChange, onSearchChange, onSortChange }: TaskFilter
                     <select
                         value={filter}
                         onChange={handleFilterChange}
-                        className="px-3 py-2 rounded-lg border border-gray-200 text-sm bg-white hover:border-gray-300 cursor-pointer"
+                        className="px-3 py-2 rounded-lg border border-gray-200 text-sm bg-[#fafafa] hover:border-gray-300 cursor-pointer"
                     >
                         <option value="all">All</option>
                         <option value="completed">Completed</option>
@@ -61,7 +61,7 @@ const TaskFilter = ({ onFilterChange, onSearchChange, onSortChange }: TaskFilter
                     <select
                         value={sort}
                         onChange={handleSortChange}
-                        className="px-3 py-2 rounded-lg border border-gray-200 text-sm bg-white hover:border-gray-300 cursor-pointer"
+                        className="px-3 py-2 rounded-lg border border-gray-200 text-sm bg-[#fafafa] hover:border-gray-300 cursor-pointer"
                     >
                         <option value="none">Sort By</option>
                         <option value="dueDateAsc">Due Date ↑</option>

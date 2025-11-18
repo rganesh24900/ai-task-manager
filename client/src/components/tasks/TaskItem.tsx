@@ -9,7 +9,7 @@ const TaskItem = ({ task, confirm }: { task: Task, confirm: (actionType: ActionT
     return (
         <div
             key={task.id}
-            className={`bg-white rounded-2xl shadow-sm hover:shadow-md transition-all p-5 border border-gray-100 relative ${task.completed ? "opacity-60" : ""
+            className={`bg-[#fafafa] rounded-2xl shadow-sm hover:shadow-md transition-all p-5 border border-gray-100 relative ${task.completed ? "opacity-60" : ""
                 }`}
         >
             <button

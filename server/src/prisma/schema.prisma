@@ -18,20 +18,27 @@ model User {
 }
 
 model Task {
-    id          String    @id @default(uuid())
+    id          String     @id @default(uuid())
     userId      String
-    user        User?     @relation(fields: [userId], references: [id]) // 👈 make this optional
+    user        User       @relation(fields: [userId], references: [id])
     title       String
     description String?
+    status      TaskStatus @default(TODO)
     dueDate     DateTime?
-    priority    Priority  @default(Low)
-    completed   Boolean   @default(false)
-    createdAt   DateTime  @default(now())
-    updatedAt   DateTime  @updatedAt
+    priority    Priority   @default(Low)
+    completed   Boolean    @default(false)
+    createdAt   DateTime   @default(now())
+    updatedAt   DateTime   @updatedAt
 }
 
 enum Priority {
     Low
     Medium
     High
+}
+
+enum TaskStatus {
+    TODO
+    IN_PROGRESS
+    DONE
 }
