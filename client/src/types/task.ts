@@ -13,7 +13,7 @@ export interface Task {
   title: string;
   description?: string;
   priority: "Low" | "Medium" | "High";
-  status: "pending" | "in_progress" | "completed";
+  status: ColumnType;
   dueDate?: string; // ISO date (converted from DateTime)
   time?: string; // "HH:mm" format
   recurrence?: "none" | "daily" | "weekly" | "monthly";
@@ -24,4 +24,8 @@ export interface Task {
 }
 
 export type ActionType = "CREATE" | "UPDATE" | "DELETE"
+
+export type ColumnType = "TODO" | "IN_PROGRESS" | "DONE";
+
+export type Columns = Record<ColumnType, Task[]> | undefined;
 

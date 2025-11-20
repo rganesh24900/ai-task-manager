@@ -1,23 +1,29 @@
-import { useState } from "react";
-import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
+import { useEffect, useState } from "react";
+import { DragDropContext, Droppable, Draggable, type DropResult } from "@hello-pangea/dnd";
+import type { Columns, ColumnType, Task } from "../../types";
+import useTasks from "../../hooks/tasks/useTasks";
 
-const initialData = {
-    todo: [
-        { id: "task-1", text: "Create project structure" },
-        { id: "task-2", text: "Set up Auth" },
-    ],
-    inprogress: [
-        { id: "task-3", text: "Design UI screens" },
-    ],
-    done: [
-        { id: "task-4", text: "Write documentation" },
-    ],
-};
 
 export default function KanbanBoard() {
-    const [columns, setColumns] = useState(initialData);
+    const { data: tasks, isLoading, isError, error } = useTasks();
+    const mappedTasks = tasks?.reduce((acc, el) => {
+        if (acc[el.status]) {
+            acc[el.status].push(el)
+        }
+        else {
+            acc[el.status] = [el]
+        }
+        return acc
+    }, { TODO: [], IN_PROGRESS: [], DONE: [] } as Record<ColumnType, Task[]>)
+    const [columns, setColumns] = useState<Columns>(mappedTasks);
 
-    const onDragEnd = (result) => {
+    useEffect(() => {
+        if (mappedTasks) {
+            setColumns(mappedTasks)
+        }
+    }, [JSON.stringify(mappedTasks)])
+
+    const onDragEnd = (result: DropResult<string>) => {
         const { source, destination } = result;
 
         // If dropped outside any column
@@ -30,36 +36,22 @@ export default function KanbanBoard() {
         )
             return;
 
-        const sourceCol = [...columns[source.droppableId]];
-        const destCol = [...columns[destination.droppableId]];
-
-        const [movedTask] = sourceCol.splice(source.index, 1);
-
-        // If moved inside same column
-        if (source.droppableId === destination.droppableId) {
-            sourceCol.splice(destination.index, 0, movedTask);
-            setColumns({
-                ...columns,
-                [source.droppableId]: sourceCol,
-            });
-        } else {
-            // Moving to another column
-            destCol.splice(destination.index, 0, movedTask);
-            setColumns({
-                ...columns,
-                [source.droppableId]: sourceCol,
-                [destination.droppableId]: destCol,
-            });
-        }
     };
 
     return (
         <div className="min-h-screen bg-white p-10">
             <h1 className="text-3xl font-bold text-gray-800 mb-8">Kanban Board</h1>
 
+            {isLoading && <p className="text-center text-gray-500 mt-10">Loading...</p>}
+            {isError && (
+                <p className="text-center text-red-500 mt-10">
+                    Error: {(error as Error).message}
+                </p>
+            )}
+
             <DragDropContext onDragEnd={onDragEnd}>
                 <div className="grid grid-cols-3 gap-6">
-                    {Object.entries(columns).map(([columnId, tasks]) => (
+                    {columns && Object.entries(columns).map(([columnId, tasks]) => (
                         <Droppable droppableId={columnId} key={columnId}>
                             {(provided) => (
                                 <div
@@ -74,7 +66,7 @@ export default function KanbanBoard() {
                                     {tasks.map((task, index) => (
                                         <Draggable
                                             key={task.id}
-                                            draggableId={task.id}
+                                            draggableId={task.id || "0"}
                                             index={index}
                                         >
                                             {(provided, snapshot) => (
@@ -82,13 +74,12 @@ export default function KanbanBoard() {
                                                     className={`
                             p-3 mb-3 rounded-lg shadow-sm bg-white border 
                             transition 
-                            ${snapshot.isDragging ? "shadow-lg scale-[1.02]" : ""}
-                          `}
+                            ${snapshot.isDragging ? "shadow-lg scale-[1.02]" : ""}`}
                                                     ref={provided.innerRef}
                                                     {...provided.draggableProps}
                                                     {...provided.dragHandleProps}
                                                 >
-                                                    {task.text}
+                                                    {task.title}
                                                 </div>
                                             )}
                                         </Draggable>

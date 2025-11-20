@@ -2,22 +2,19 @@ import React, { useState, useMemo, useEffect } from "react";
 import Button from "../../common/components/Button";
 import { useTaskPopup } from "../../hooks/tasks/useTaskPopup";
 import useTasks from "../../hooks/tasks/useTasks";
-import useLogout from "../../hooks/auth/useLogout";
 import type { Task } from "../../types";
-import { Trash, LogOut, Calendar, Bell } from "lucide-react";
+import { Trash, Calendar, Bell } from "lucide-react";
 import TaskFilter from "./TaskFilter";
 
 const TaskList: React.FC = () => {
   const { data: tasks, isLoading, isError, error } = useTasks();
   const { confirm, ConfirmDialog } = useTaskPopup();
-  const { mutate: handleLogout } = useLogout();
 
   const [filter, setFilter] = useState("all");
   const [search, setSearch] = useState("");
   const [sort, setSort] = useState("none");
   const [reminders, setReminders] = useState<Task[]>([]);
 
-  // ---------- FILTER & SORT ----------
   const filteredTasks = useMemo(() => {
     if (!tasks) return [];
     let result = [...tasks];
@@ -30,8 +27,8 @@ const TaskList: React.FC = () => {
       );
     }
 
-    if (filter === "completed") result = result.filter((t) => t.completed);
-    else if (filter === "pending") result = result.filter((t) => !t.completed);
+    if (["IN_PROGRESS", "TODO", "DONE"].includes(filter))
+      result = result.filter((t) => t.status == filter);
     else if (["High", "Medium", "Low"].includes(filter))
       result = result.filter((t) => t.priority === filter);
 
@@ -51,14 +48,12 @@ const TaskList: React.FC = () => {
     return result;
   }, [tasks, filter, search, sort]);
 
-  // Permissions
   useEffect(() => {
     if ("Notification" in window && Notification.permission === "default") {
       Notification.requestPermission();
     }
   }, []);
 
-  // ---------- REMINDERS ----------
   useEffect(() => {
     if (!tasks?.length) return;
 
@@ -75,7 +70,7 @@ const TaskList: React.FC = () => {
       if ("Notification" in window && Notification.permission === "granted") {
         upcoming.forEach((task) => {
           new Notification("Upcoming Task", {
-            body: `${task.title} is due at ${new Date(task.dueDate||"").toLocaleTimeString()}`
+            body: `${task.title} is due at ${new Date(task.dueDate || "").toLocaleTimeString()}`
           });
         });
       }
@@ -88,15 +83,12 @@ const TaskList: React.FC = () => {
 
   return (
     <div className="min-h-screen p-6 bg-[#fafafa]">
-      {/* PAGE HEADER */}
-      {/* PAGE HEADER */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
         <h1 className="text-3xl font-semibold text-gray-900 tracking-tight">
           Tasks
         </h1>
 
         <div className="flex gap-3">
-          {/* CREATE TASK */}
           <Button
             variant="primary"
             onClick={() => confirm("CREATE")}
@@ -108,7 +100,6 @@ const TaskList: React.FC = () => {
       </div>
 
 
-      {/* FILTER SECTION */}
       <TaskFilter
         onSearchChange={setSearch}
         onFilterChange={setFilter}
@@ -160,7 +151,6 @@ const TaskList: React.FC = () => {
               </div>
 
               <div className="flex gap-2">
-                {/* EDIT */}
                 <Button
                   variant="tertiary"
                   onClick={() => confirm("UPDATE", task)}
@@ -169,7 +159,6 @@ const TaskList: React.FC = () => {
                   Edit
                 </Button>
 
-                {/* DELETE */}
                 <Button
                   variant="danger"
                   onClick={() => confirm("DELETE", task)}
@@ -182,7 +171,6 @@ const TaskList: React.FC = () => {
 
             </div>
 
-            {/* PRIORITY + DATE */}
             <div className="flex justify-between items-center text-xs text-gray-500">
               <span
                 className={`px-2 py-1 rounded-md font-medium

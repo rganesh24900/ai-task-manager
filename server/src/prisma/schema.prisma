@@ -20,13 +20,12 @@ model User {
 model Task {
     id          String     @id @default(uuid())
     userId      String
-    user        User       @relation(fields: [userId], references: [id])
+    user        User?       @relation(fields: [userId], references: [id])
     title       String
     description String?
     status      TaskStatus @default(TODO)
     dueDate     DateTime?
     priority    Priority   @default(Low)
-    completed   Boolean    @default(false)
     createdAt   DateTime   @default(now())
     updatedAt   DateTime   @updatedAt
 }

@@ -10,11 +10,11 @@ const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 export const updateTask: RequestHandler = async (req, res) => {
     try {
         const { id } = req.params;
-        const { title, description, dueDate, priority, completed } = req.body?.data;
+        const { title, description, dueDate, priority, status } = req.body?.data;
 
         const updatedTask = await prisma.task.update({
             where: { id },
-            data: { title, description, dueDate, priority, completed },
+            data: { title, description, dueDate, priority, status },
         });
         res.status(200).json(updatedTask);
     } catch (error) {

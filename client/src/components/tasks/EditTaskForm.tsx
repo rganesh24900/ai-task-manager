@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import type { Task } from "../../types";
+import { Field, Form, Formik } from "formik";
 
 interface EditTaskFormProps {
     formData: Task;
@@ -9,96 +10,123 @@ interface EditTaskFormProps {
 
 const EditTaskForm: React.FC<EditTaskFormProps> = ({ formData, onSubmit }) => {
     const [task, setTask] = useState<Task>(formData);
-    console.log({task})
 
     useEffect(() => {
-        if (formData) setTask(formData);
+        if (!formData) return;
+
+        const formatted = formData.dueDate
+            ? new Date(formData.dueDate).toISOString().slice(0, 16) // yyyy-MM-ddTHH:mm
+            : "";
+        console.log({ formatted })
+        setTask({ ...formData, dueDate: formatted });
     }, [formData]);
 
-    const handleChange = (
-        e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
-    ) => {
-        const { name, value } = e.target;
-        setTask((prev) => ({ ...prev, [name]: value }));
-    };
 
-
-
-    useEffect(() => {
-        if (formData) {
-            const formattedDate = formData.dueDate
-                ? new Date(formData.dueDate).toISOString().slice(0, 16)
-                : "";
-            setTask({ ...formData, dueDate: formattedDate });
-        }
-    }, [formData]);
-
-    const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
-        const payload = {
-            ...task,
-            dueDate: task.dueDate ? new Date(task.dueDate).toISOString() : undefined,
-        };
-        onSubmit(payload);
-    };
 
 
     return (
-        <form
-            onSubmit={handleSubmit}
-            className="flex flex-col gap-4 p-4"
+        <Formik
+            enableReinitialize
+            initialValues={{
+                id:task.id,
+                title: task.title,
+                description: task.description,
+                priority: task.priority,
+                dueDate: task.dueDate || "",
+                time: task.time,
+                status: task.status
+            }}
+
+            onSubmit={(values) => {
+                const { dueDate, ...rest } = values;
+                const convertedDate = task.dueDate ? new Date(task.dueDate).toISOString() : undefined
+                onSubmit({ ...rest, dueDate: convertedDate } as unknown as Task);
+            }}
         >
-            {/* Title */}
-            <label className="flex gap-1" htmlFor="">
-                Title : <input
-                    name="title"
-                    value={task.title}
-                    onChange={handleChange}
-                    className="grow"
-                    required
-                />
-            </label>
+            {({ values, setFieldValue }) => {
 
-            {/* Description */}
-            <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Description
-                </label>
-                <textarea
-                    name="description"
-                    value={task.description || ""}
-                    onChange={handleChange}
-                    rows={3}
-                    className="w-full border border-gray-300 rounded-lg p-2 focus:ring focus:ring-indigo-200"
-                />
-            </div>
-
-            {/* Priority + Reminder */}
-            <div className="flex gap-3 flex-col">
-                <div className="flex-1">
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Priority
-                    </label>
-                    <select
-                        name="priority"
-                        value={task.priority || "Medium"}
-                        onChange={handleChange}
-                        className="w-full border border-gray-300 rounded-lg p-2"
+                const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+                    const date = e.target.value;
+                    setFieldValue(
+                        "dueDate",
+                        date ? `${date}T${values.time || "00:00"}:00.000Z` : ""
+                    );
+                };
+                return (
+                    <Form
+                        className="flex flex-col gap-4 p-4"
                     >
-                        <option>Low</option>
-                        <option>Medium</option>
-                        <option>High</option>
-                    </select>
-                </div>
-                <input
-                    type="datetime-local"
-                    name="dueDate"
-                    value={task.dueDate}
-                    onChange={handleChange}
-                    className="w-full border rounded-lg px-3 py-2"
-                />
-            </div>
-        </form>
+                        {/* Title */}
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                                Title
+                            </label> <Field
+                                type="text"
+                                name="title"
+                                placeholder="Task Title"
+                                className="w-full border rounded-lg px-3 py-2"
+                            />
+                        </div>
+
+                        {/* Description */}
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                                Description
+                            </label>
+                            <Field
+                                as="textarea"
+                                name="description"
+                                placeholder="Description"
+                                className="w-full border rounded-lg px-3 py-2"
+                            />
+                        </div>
+                        <div>
+
+                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                                Status
+                            </label>
+                            <Field
+                                as="select"
+                                name="status"
+                                className="w-full border rounded-lg px-3 py-2"
+                            >
+                                <option value="TODO">To Do</option>
+                                <option value="IN_PROGRESS">In Progress</option>
+                                <option value="DONE">Done</option>
+                            </Field>
+                        </div>
+                        {/* Priority + Reminder */}
+                        <div className="flex gap-3 flex-col">
+                            <div className="flex-1">
+                                <label className="block text-sm font-medium text-gray-700 mb-1">
+                                    Priority
+                                </label>
+                                <Field
+                                    as="select"
+                                    name="priority"
+                                    className="w-full border rounded-lg px-3 py-2"
+                                >
+                                    <option value="Low">Low</option>
+                                    <option value="Medium">Medium</option>
+                                    <option value="High">High</option>
+                                </Field>
+                            </div>
+                            <input
+                                type="datetime-local"
+                                name="dueDate"
+                                value={values.dueDate}
+                                onChange={(e) => setFieldValue("dueDate", e.target.value)}
+                                className="w-full border rounded-lg px-3 py-2"
+                            />
+
+
+                        </div>
+                    </Form>
+                )
+
+            }}
+        </Formik>
+
     );
 };
 

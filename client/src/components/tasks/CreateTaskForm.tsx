@@ -141,7 +141,7 @@ const CreateTaskForm: React.FC<CreateTaskFormProps> = ({ onSubmit }) => {
                             </label>
                         </div>
 
-                        {(aiSuggestions.subtasks?.length || aiSuggestions.actions?.length) && (
+                        {(aiSuggestions.subtasks?.length || aiSuggestions.actions?.length) ? (
                             <div className="bg-gray-50 border border-gray-200 rounded-lg p-3">
                                 {aiSuggestions.subtasks?.length ? (
                                     <div>
@@ -169,7 +169,7 @@ const CreateTaskForm: React.FC<CreateTaskFormProps> = ({ onSubmit }) => {
                                     </div>
                                 ) : null}
                             </div>
-                        )}
+                        ) : null}
                     </Form>
                 );
             }}

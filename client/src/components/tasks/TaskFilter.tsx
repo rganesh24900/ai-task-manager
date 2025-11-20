@@ -51,8 +51,9 @@ const TaskFilter = ({ onFilterChange, onSearchChange, onSortChange }: TaskFilter
                         className="px-3 py-2 rounded-lg border border-gray-200 text-sm bg-[#fafafa] hover:border-gray-300 cursor-pointer"
                     >
                         <option value="all">All</option>
-                        <option value="completed">Completed</option>
-                        <option value="pending">Pending</option>
+                        <option value="TODO">To Do</option>
+                        <option value="IN_PROGRESS">In Progress</option>
+                        <option value="DONE">Completed</option>
                         <option value="High">High Priority</option>
                         <option value="Medium">Medium Priority</option>
                         <option value="Low">Low Priority</option>
@@ -64,8 +65,8 @@ const TaskFilter = ({ onFilterChange, onSearchChange, onSortChange }: TaskFilter
                         className="px-3 py-2 rounded-lg border border-gray-200 text-sm bg-[#fafafa] hover:border-gray-300 cursor-pointer"
                     >
                         <option value="none">Sort By</option>
-                        <option value="dueDateAsc">Due Date ↑</option>
-                        <option value="dueDateDesc">Due Date ↓</option>
+                        <option value="dueDateAsc">Due Date Asc</option>
+                        <option value="dueDateDesc">Due Date Desc</option>
                         <option value="priority">Priority</option>
                     </select>
                 </div>
