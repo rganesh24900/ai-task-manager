@@ -45,13 +45,6 @@ const EditTaskForm: React.FC<EditTaskFormProps> = ({ formData, onSubmit }) => {
         >
             {({ values, setFieldValue }) => {
 
-                const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-                    const date = e.target.value;
-                    setFieldValue(
-                        "dueDate",
-                        date ? `${date}T${values.time || "00:00"}:00.000Z` : ""
-                    );
-                };
                 return (
                     <Form
                         className="flex flex-col gap-4 p-4"
