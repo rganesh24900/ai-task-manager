@@ -2,6 +2,7 @@ import type { ElementType } from "react";
 import TaskCreateForm from "../../components/tasks/CreateTaskForm";
 import EditTaskForm from "../../components/tasks/EditTaskForm";
 import DeleteTaskConfirm from "../../components/tasks/DeleteTaskConfirm";
+import type { ColumnType } from "../../types";
 
 
 export const taskPopup: Record<string, { component: ElementType, props?: any, header: string, confirmText: string, cancelText: string }> = {
@@ -24,3 +25,9 @@ export const taskPopup: Record<string, { component: ElementType, props?: any, he
         cancelText: "No",
     },
 };
+
+export const TaskColumnMap: Record<ColumnType, string> = {
+    TODO: "To Do",
+    IN_PROGRESS: "In Progress",
+    DONE: "Done"
+}

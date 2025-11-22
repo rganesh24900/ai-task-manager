@@ -14,7 +14,7 @@ function App() {
       {/* Protected or normal layout */}
       <Route path="/" element={<Layout />}>
         <Route path="board" element={<TaskBoard />} />
-        <Route path="list" element={<TaskList />} />
+        <Route index element={<TaskList />} />
       </Route>
     </Routes>
   );

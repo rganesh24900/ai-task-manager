@@ -19,10 +19,12 @@ export const useTaskPopup = () => {
     const { mutate: actionTaskMutate } = useTaskAction();
 
 
-    const handleSubmit = (data: Task) => {
-        console.log({ data })
-        action && actionTaskMutate({ payload: { ...data }, action })
-        setOpen(false)
+    const handleSubmit = async (data: Task) => {
+        action && actionTaskMutate({ payload: { ...data }, action }, {
+            onSuccess: () => {
+                setOpen(false)
+            }
+        })
     };
 
     const confirm = (actionType: ActionType, payload?: any) => {

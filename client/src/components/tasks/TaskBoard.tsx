@@ -2,10 +2,13 @@ import { useEffect, useState } from "react";
 import { DragDropContext, Droppable, Draggable, type DropResult } from "@hello-pangea/dnd";
 import type { Columns, ColumnType, Task } from "../../types";
 import useTasks from "../../hooks/tasks/useTasks";
+import { TaskColumnMap } from "../../utils/tasks";
+import useTaskAction from "../../hooks/tasks/useTaskAction";
 
 
-export default function KanbanBoard() {
+export default function TaskBoard() {
     const { data: tasks, isLoading, isError, error } = useTasks();
+    const { mutate: actionTaskMutate } = useTaskAction();
     const mappedTasks = tasks?.reduce((acc, el) => {
         if (acc[el.status]) {
             acc[el.status].push(el)
@@ -16,31 +19,67 @@ export default function KanbanBoard() {
         return acc
     }, { TODO: [], IN_PROGRESS: [], DONE: [] } as Record<ColumnType, Task[]>)
     const [columns, setColumns] = useState<Columns>(mappedTasks);
+    const [movedTask, setMovedTask] = useState<Task | null>(null)
 
     useEffect(() => {
-        if (mappedTasks) {
+        if (mappedTasks && !movedTask) {
             setColumns(mappedTasks)
         }
     }, [JSON.stringify(mappedTasks)])
 
+    useEffect(() => {
+        if (!columns || !movedTask) return;
+        actionTaskMutate({ payload: movedTask, action: "UPDATE" })
+    }, [JSON.stringify(columns)])
+
+
     const onDragEnd = (result: DropResult<string>) => {
         const { source, destination } = result;
 
-        // If dropped outside any column
-        if (!destination) return;
+        if (!destination || !columns) return;
 
-        // If position not changed
         if (
             source.droppableId === destination.droppableId &&
             source.index === destination.index
-        )
+        ) {
             return;
+        }
 
-    };
+        const sourceKey = source.droppableId as ColumnType;
+        const destKey = destination.droppableId as ColumnType;
+
+        const sourceCol = [...columns[sourceKey]];
+        const destCol = [...columns[destKey]];
+
+        const [moved] = sourceCol.splice(source.index, 1);
+
+        setMovedTask({
+            ...moved,
+            status: destKey
+        });
+
+        if (sourceKey === destKey) {
+            sourceCol.splice(destination.index, 0, moved);
+
+            setColumns(prev => ({
+                ...prev,
+                [sourceKey]: sourceCol
+            }));
+            return;
+        }
+
+        destCol.splice(destination.index, 0, moved);
+
+        setColumns(prev => ({
+            ...prev,
+            [sourceKey]: sourceCol,
+            [destKey]: destCol
+        }));
+    }
 
     return (
         <div className="min-h-screen bg-white p-10">
-            <h1 className="text-3xl font-bold text-gray-800 mb-8">Kanban Board</h1>
+            <h1 className="text-3xl font-bold text-gray-800 mb-8">Task Board</h1>
 
             {isLoading && <p className="text-center text-gray-500 mt-10">Loading...</p>}
             {isError && (
@@ -60,7 +99,7 @@ export default function KanbanBoard() {
                                     ref={provided.innerRef}
                                 >
                                     <h2 className="text-lg font-semibold mb-4 capitalize">
-                                        {columnId}
+                                        {TaskColumnMap[columnId as ColumnType]}
                                     </h2>
 
                                     {tasks.map((task, index) => (

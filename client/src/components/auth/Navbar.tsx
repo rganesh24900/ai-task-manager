@@ -1,12 +1,12 @@
-import { NavLink, useNavigate } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import Button from "../../common/components/Button";
+import useLogout from "../../hooks/auth/useLogout";
 
 const Navbar = () => {
-    const navigate = useNavigate();
+    const {mutate:logoutFn} = useLogout()
 
     const logout = () => {
-        localStorage.removeItem("token");
-        navigate("/login");
+        logoutFn()
     };
 
     const linkClass = ({ isActive }: { isActive: boolean }) =>
@@ -22,14 +22,12 @@ const Navbar = () => {
             </h1>
 
             <div className="flex gap-4 items-center">
+                <NavLink to="/" className={linkClass}>
+                    Task List
+                </NavLink>
                 <NavLink to="/board" className={linkClass}>
                     Board
                 </NavLink>
-
-                <NavLink to="/list" className={linkClass}>
-                    Task List
-                </NavLink>
-
                 <Button
                     variant="danger"
                     onClick={logout}
