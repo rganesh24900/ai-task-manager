@@ -27,5 +27,5 @@ export type ActionType = "CREATE" | "UPDATE" | "DELETE"
 
 export type ColumnType = "TODO" | "IN_PROGRESS" | "DONE";
 
-export type Columns = Record<ColumnType, Task[]> | undefined;
+export type Columns = Record<ColumnType, Task[]> ;
 

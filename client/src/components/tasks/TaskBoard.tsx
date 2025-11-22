@@ -9,15 +9,17 @@ import useTaskAction from "../../hooks/tasks/useTaskAction";
 export default function TaskBoard() {
     const { data: tasks, isLoading, isError, error } = useTasks();
     const { mutate: actionTaskMutate } = useTaskAction();
-    const mappedTasks = tasks?.reduce((acc, el) => {
-        if (acc[el.status]) {
-            acc[el.status].push(el)
-        }
-        else {
-            acc[el.status] = [el]
-        }
-        return acc
-    }, { TODO: [], IN_PROGRESS: [], DONE: [] } as Record<ColumnType, Task[]>)
+    const emptyColumns: Columns = {
+        TODO: [],
+        IN_PROGRESS: [],
+        DONE: []
+    };
+    const mappedTasks: Columns = tasks
+        ? tasks.reduce((acc, el) => {
+            acc[el.status].push(el);
+            return acc;
+        }, emptyColumns)
+        : emptyColumns;
     const [columns, setColumns] = useState<Columns>(mappedTasks);
     const [movedTask, setMovedTask] = useState<Task | null>(null)
 
