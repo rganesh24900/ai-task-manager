@@ -10,20 +10,17 @@ const TaskBreakdown = ({ stats }: {
 }) => {
 
     const chartData = [
-        { name: "Todo", value: stats.TODO },
-        { name: "In Progress", value: stats.IN_PROGRESS },
-        { name: "Done", value: stats.DONE },
+        { name: "Todo", value: stats.TODO, color: "#fbbf24" },
+        { name: "In Progress", value: stats.IN_PROGRESS, color: "#3b82f6" },
+        { name: "Done", value: stats.DONE, color: "#10b981" },
     ];
 
-    const COLORS = ["#fbbf24", "#3b82f6", "#10b981"];
 
     const total = stats.TODO + stats.IN_PROGRESS + stats.DONE;
 
     const safeData = total === 0
-        ? [{ name: "No Tasks", value: 1 }]
+        ? [{ name: "No Tasks", value: 1, color: "e5e7eb" }]
         : chartData;
-
-    const safeColors = total === 0 ? ["#e5e7eb"] : COLORS;
 
     return (
         <PieChart width={350} height={280}>
@@ -32,7 +29,7 @@ const TaskBreakdown = ({ stats }: {
                 dataKey="value"
             >
                 {safeData.map((_, i) => (
-                    <Cell key={i} fill={safeColors[i]} />
+                    <Cell key={i} fill={_.color} />
                 ))}
             </Pie>
             <Tooltip />
