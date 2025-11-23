@@ -27,5 +27,9 @@ export type ActionType = "CREATE" | "UPDATE" | "DELETE"
 
 export type ColumnType = "TODO" | "IN_PROGRESS" | "DONE";
 
-export type Columns = Record<ColumnType, Task[]> ;
+export type Columns = Record<ColumnType, Task[]>;
+
+export type ReminderContextType = {
+  notified: string[];
+};
 

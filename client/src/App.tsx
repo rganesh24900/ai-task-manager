@@ -4,6 +4,7 @@ import Register from "./pages/Register";
 import TaskList from "./components/tasks/TaskList";
 import Layout from "./components/auth/Layout";
 import TaskBoard from "./components/tasks/TaskBoard";
+import ReminderBar from "./common/components/ReminderBar";
 
 function App() {
   return (
@@ -11,7 +12,6 @@ function App() {
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
 
-      {/* Protected or normal layout */}
       <Route path="/" element={<Layout />}>
         <Route path="board" element={<TaskBoard />} />
         <Route index element={<TaskList />} />

@@ -49,7 +49,7 @@ export const register = async (req: Request, res: Response) => {
         // 6️⃣ Set cookie
         res.cookie("token", token, {
             httpOnly: true,
-            sameSite: "none",
+            sameSite: "lax",
             secure: process.env.NODE_ENV === "production",
             maxAge: 1000 * 60 * 60,
         });
@@ -80,10 +80,9 @@ export const login = async (req: Request, res: Response) => {
         if (!valid) return res.status(401).json({ message: "Invalid credentials" });
 
         const token = signJWT({ userId: user.id, email: user.email })
-        const safeUser = { id: user.id, email: user.email, name: user.name, createdAt: user.createdAt };
         res.cookie("token", token, {
             httpOnly: true,
-            sameSite: "none",
+            sameSite: "lax",
             secure: process.env.NODE_ENV === "production",
             maxAge: 1000 * 60 * 60,
         });

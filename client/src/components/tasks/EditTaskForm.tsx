@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import type { Task } from "../../types";
 import { Field, Form, Formik } from "formik";
+import { toLocalInputValue, toUTC } from "../../utils/tasks";
 
 interface EditTaskFormProps {
     formData: Task;
@@ -15,11 +16,12 @@ const EditTaskForm: React.FC<EditTaskFormProps> = ({ formData, onSubmit }) => {
         if (!formData) return;
 
         const formatted = formData.dueDate
-            ? new Date(formData.dueDate).toISOString().slice(0, 16) // yyyy-MM-ddTHH:mm
+            ? toLocalInputValue(formData.dueDate)
             : "";
-        console.log({ formatted })
+
         setTask({ ...formData, dueDate: formatted });
     }, [formData]);
+
 
 
 
@@ -28,7 +30,7 @@ const EditTaskForm: React.FC<EditTaskFormProps> = ({ formData, onSubmit }) => {
         <Formik
             enableReinitialize
             initialValues={{
-                id:task.id,
+                id: task.id,
                 title: task.title,
                 description: task.description,
                 priority: task.priority,
@@ -38,10 +40,12 @@ const EditTaskForm: React.FC<EditTaskFormProps> = ({ formData, onSubmit }) => {
             }}
 
             onSubmit={(values) => {
-                const { dueDate, ...rest } = values;
-                const convertedDate = task.dueDate ? new Date(task.dueDate).toISOString() : undefined
-                onSubmit({ ...rest, dueDate: convertedDate } as unknown as Task);
+                onSubmit({
+                    ...values,
+                    dueDate: values.dueDate ? toUTC(values.dueDate) : undefined,
+                });
             }}
+
         >
             {({ values, setFieldValue }) => {
 

@@ -2,9 +2,8 @@ import React, { useState, useMemo, useEffect } from "react";
 import Button from "../../common/components/Button";
 import { useTaskPopup } from "../../hooks/tasks/useTaskPopup";
 import useTasks from "../../hooks/tasks/useTasks";
-import type { Task } from "../../types";
-import { Trash, Calendar, Bell } from "lucide-react";
 import TaskFilter from "./TaskFilter";
+import TaskCard from "./TaskCard";
 
 const TaskList: React.FC = () => {
   const { data: tasks, isLoading, isError, error } = useTasks();
@@ -13,7 +12,6 @@ const TaskList: React.FC = () => {
   const [filter, setFilter] = useState("all");
   const [search, setSearch] = useState("");
   const [sort, setSort] = useState("none");
-  const [reminders, setReminders] = useState<Task[]>([]);
 
   const filteredTasks = useMemo(() => {
     if (!tasks) return [];
@@ -48,81 +46,30 @@ const TaskList: React.FC = () => {
     return result;
   }, [tasks, filter, search, sort]);
 
-  useEffect(() => {
-    if ("Notification" in window && Notification.permission === "default") {
-      Notification.requestPermission();
-    }
-  }, []);
-
-  useEffect(() => {
-    if (!tasks?.length) return;
-
-    const checkReminders = () => {
-      const now = new Date();
-      const upcoming = tasks.filter((task) => {
-        if (!task.dueDate) return false;
-        const diff = new Date(task.dueDate).getTime() - now.getTime();
-        return diff > 0 && diff <= 30 * 60 * 1000;
-      });
-
-      setReminders(upcoming);
-
-      if ("Notification" in window && Notification.permission === "granted") {
-        upcoming.forEach((task) => {
-          new Notification("Upcoming Task", {
-            body: `${task.title} is due at ${new Date(task.dueDate || "").toLocaleTimeString()}`
-          });
-        });
-      }
-    };
-
-    checkReminders();
-    const interval = setInterval(checkReminders, 60 * 1000);
-    return () => clearInterval(interval);
-  }, [tasks]);
 
   return (
-    <div className="min-h-screen p-6 bg-[#fafafa]">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
-        <h1 className="text-3xl font-semibold text-gray-900 tracking-tight">
+    <div className="min-h-screen p-4 sm:p-6 bg-[#fafafa]">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 sm:mb-8 gap-4">
+        <h1 className="text-2xl sm:text-3xl font-semibold text-gray-900 tracking-tight">
           Tasks
         </h1>
 
-        <div className="flex gap-3">
+        <div className="flex w-full sm:w-auto">
           <Button
             variant="primary"
             onClick={() => confirm("CREATE")}
-            className="px-5 py-2"
+            className="px-5 py-2 w-full sm:w-auto"
           >
             + Create Task
           </Button>
         </div>
       </div>
 
-
       <TaskFilter
         onSearchChange={setSearch}
         onFilterChange={setFilter}
         onSortChange={setSort}
       />
-
-      {/* REMINDER BAR */}
-      {reminders.length > 0 && (
-        <div className="mb-6 bg-yellow-50 border border-yellow-200 rounded-lg p-4 flex items-center gap-3 text-yellow-800">
-          <Bell className="w-5 h-5" />
-          <span className="font-medium">
-            {reminders.length} tasks due soon:
-          </span>
-          {reminders.map((task) => (
-            <span
-              key={task.id}
-              className="bg-yellow-100 px-2 py-1 rounded-md text-xs font-medium"
-            >
-              {task.title}
-            </span>
-          ))}
-        </div>
-      )}
 
       {/* LOADING / EMPTY */}
       {isLoading && <p className="text-center text-gray-500 mt-10">Loading...</p>}
@@ -135,68 +82,11 @@ const TaskList: React.FC = () => {
         <p className="text-center text-gray-400 mt-10">No tasks found</p>
       )}
 
-      {/* TASK GRID */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {filteredTasks.map((task) => (
-          <div
-            key={task.id}
-            className="bg-[#fafafa] border border-gray-200 rounded-xl p-5 shadow-sm hover:shadow-md transition-all"
-          >
-            <div className="flex justify-between items-start mb-4">
-              <div>
-                <h3 className="text-lg font-medium text-gray-900">{task.title}</h3>
-                <p className="text-gray-600 text-sm mt-1">
-                  {task.description || "—"}
-                </p>
-              </div>
-
-              <div className="flex gap-2">
-                <Button
-                  variant="tertiary"
-                  onClick={() => confirm("UPDATE", task)}
-                  className="px-3 py-1 text-xs"
-                >
-                  Edit
-                </Button>
-
-                <Button
-                  variant="danger"
-                  onClick={() => confirm("DELETE", task)}
-                  className="px-3 py-1 text-xs flex items-center gap-1"
-                >
-                  <Trash className="w-4 h-4" />
-                  Delete
-                </Button>
-              </div>
-
-            </div>
-
-            <div className="flex justify-between items-center text-xs text-gray-500">
-              <span
-                className={`px-2 py-1 rounded-md font-medium
-              ${task.priority === "High"
-                    ? "bg-red-100 text-red-600"
-                    : task.priority === "Medium"
-                      ? "bg-yellow-100 text-yellow-700"
-                      : "bg-green-100 text-green-700"
-                  }`}
-              >
-                {task.priority}
-              </span>
-
-              {task.dueDate && (
-                <span className="flex items-center gap-1">
-                  <Calendar className="w-3 h-3" />
-                  {new Date(task.dueDate).toLocaleString()}
-                </span>
-              )}
-            </div>
-          </div>
-        ))}
-      </div>
+      <TaskCard filteredTasks={filteredTasks} confirm={confirm} />
 
       <ConfirmDialog />
     </div>
+
   );
 
 };

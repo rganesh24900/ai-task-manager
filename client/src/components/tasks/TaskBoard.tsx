@@ -80,8 +80,10 @@ export default function TaskBoard() {
     }
 
     return (
-        <div className="min-h-screen bg-white p-10">
-            <h1 className="text-3xl font-bold text-gray-800 mb-8">Task Board</h1>
+        <div className="min-h-screen bg-[#fafafa] p-4 sm:p-8">
+            <h1 className="text-3xl font-bold text-gray-900 mb-8 tracking-tight text-center sm:text-left">
+                Task Board
+            </h1>
 
             {isLoading && <p className="text-center text-gray-500 mt-10">Loading...</p>}
             {isError && (
@@ -91,46 +93,104 @@ export default function TaskBoard() {
             )}
 
             <DragDropContext onDragEnd={onDragEnd}>
-                <div className="grid grid-cols-3 gap-6">
-                    {columns && Object.entries(columns).map(([columnId, tasks]) => (
-                        <Droppable droppableId={columnId} key={columnId}>
-                            {(provided) => (
-                                <div
-                                    className="bg-gray-50 border border-gray-200 rounded-xl p-4 min-h-[60vh]"
-                                    {...provided.droppableProps}
-                                    ref={provided.innerRef}
-                                >
-                                    <h2 className="text-lg font-semibold mb-4 capitalize">
-                                        {TaskColumnMap[columnId as ColumnType]}
-                                    </h2>
+                <div className="
+                grid 
+                grid-cols-1 
+                sm:grid-cols-2 
+                lg:grid-cols-3 
+                gap-6
+            ">
+                    {columns &&
+                        Object.entries(columns).map(([columnId, tasks]) => (
+                            <Droppable droppableId={columnId} key={columnId}>
+                                {(provided) => (
+                                    <div
+                                        {...provided.droppableProps}
+                                        ref={provided.innerRef}
+                                        className="
+                                        bg-white 
+                                        rounded-2xl 
+                                        shadow-sm 
+                                        border 
+                                        border-gray-200 
+                                        p-5 
+                                        min-h-[65vh]
+                                        flex 
+                                        flex-col
+                                        transition
+                                    "
+                                    >
+                                        <h2 className="
+                                        text-lg 
+                                        font-semibold 
+                                        text-gray-800 
+                                        mb-4 
+                                        flex 
+                                        justify-between 
+                                        items-center
+                                    ">
+                                            {TaskColumnMap[columnId as ColumnType]}
 
-                                    {tasks.map((task, index) => (
-                                        <Draggable
-                                            key={task.id}
-                                            draggableId={task.id || "0"}
-                                            index={index}
-                                        >
-                                            {(provided, snapshot) => (
-                                                <div
-                                                    className={`
-                            p-3 mb-3 rounded-lg shadow-sm bg-white border 
-                            transition 
-                            ${snapshot.isDragging ? "shadow-lg scale-[1.02]" : ""}`}
-                                                    ref={provided.innerRef}
-                                                    {...provided.draggableProps}
-                                                    {...provided.dragHandleProps}
+                                            <span className="
+                                            text-xs 
+                                            px-2 
+                                            py-1 
+                                            rounded-full 
+                                            bg-gray-100 
+                                            text-gray-600
+                                        ">
+                                                {tasks.length} tasks
+                                            </span>
+                                        </h2>
+
+                                        <div className="flex flex-col flex-1">
+                                            {tasks.map((task, index) => (
+                                                <Draggable
+                                                    key={task.id}
+                                                    draggableId={task.id || "0"}
+                                                    index={index}
                                                 >
-                                                    {task.title}
-                                                </div>
-                                            )}
-                                        </Draggable>
-                                    ))}
+                                                    {(provided, snapshot) => (
+                                                        <div
+                                                            ref={provided.innerRef}
+                                                            {...provided.draggableProps}
+                                                            {...provided.dragHandleProps}
+                                                            className={`
+                                                            p-4 mb-3 
+                                                            rounded-xl 
+                                                            shadow-sm 
+                                                            border 
+                                                            bg-white
+                                                            text-gray-800
+                                                            cursor-grab
+                                                            hover:shadow-md
+                                                            hover:border-gray-300
+                                                            transition-all 
+                                                            duration-150
+                                                            ${snapshot.isDragging
+                                                                    ? `shadow-xl scale-[1.03] bg-purple-50 border-purple-300`
+                                                                    : ""
+                                                                }
+                                                        `}
+                                                        >
+                                                            <p className="font-medium">
+                                                                {task.title}
+                                                            </p>
 
-                                    {provided.placeholder}
-                                </div>
-                            )}
-                        </Droppable>
-                    ))}
+                                                            <p className="text-xs text-gray-500 mt-1">
+                                                                {task?.priority} priority
+                                                            </p>
+                                                        </div>
+                                                    )}
+                                                </Draggable>
+                                            ))}
+
+                                            {provided.placeholder}
+                                        </div>
+                                    </div>
+                                )}
+                            </Droppable>
+                        ))}
                 </div>
             </DragDropContext>
         </div>
