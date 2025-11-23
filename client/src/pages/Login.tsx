@@ -7,7 +7,7 @@ const Login = () => {
             <div className="bg-[#fafafa] border border-gray-200 shadow-sm rounded-2xl p-8 w-full max-w-md text-center">
 
                 <h1 className="font-bold text-3xl text-gray-900 mb-4">
-                    Welcome Back 👋
+                    Welcome Back !!
                 </h1>
 
                 <p className="text-gray-600 mb-8 text-sm">

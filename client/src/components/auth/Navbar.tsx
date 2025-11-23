@@ -1,4 +1,4 @@
-import { NavLink } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import { Menu, X } from "lucide-react";
 import { useState } from "react";
 import Button from "../../common/components/Button";
@@ -19,13 +19,18 @@ const Navbar = () => {
     return (
         <nav className="w-full bg-[#fafafa] border-b px-6 py-3 flex justify-between items-center relative">
             {/* Logo */}
-            <h1 className="text-xl font-bold text-gray-900 tracking-tight">
-                AI Task Manager
-            </h1>
+            <Link to="/">
+                <h1 className="text-xl font-bold text-gray-900 tracking-tight cursor-pointer">
+                    AI Task Manager
+                </h1>
+            </Link>
 
             {/* Desktop Menu */}
             <div className="hidden md:flex gap-4 items-center">
                 <NavLink to="/" className={linkClass}>
+                    Home Page
+                </NavLink>
+                <NavLink to="/list" className={linkClass}>
                     Task List
                 </NavLink>
                 <NavLink to="/board" className={linkClass}>
