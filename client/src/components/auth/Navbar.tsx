@@ -48,6 +48,11 @@ const Navbar = () => {
 
             {open && (
                 <div className="absolute top-full left-0 w-full bg-white border-b shadow-md md:hidden p-4 flex flex-col gap-3 z-50">
+                    <NavLink to="/"
+                        onClick={() => setOpen(false)}
+                        className={linkClass}>
+                        Home Page
+                    </NavLink>
                     <NavLink
                         to="/list"
                         onClick={() => setOpen(false)}

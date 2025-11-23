@@ -53,11 +53,11 @@ const TaskCard = ({ filteredTasks, confirm }: { filteredTasks: Task[], confirm: 
                             {task.priority}
                         </span>
 
-                        <div className="flex items-center justify-between gap-2">
+                        <div className="flex items-center justify-between gap-2 whitespace-nowrap truncate">
                             {getStatusBadge(task.status)}
 
                             {task.dueDate && (
-                                <span className="flex items-center gap-1 text-xs text-gray-500">
+                                <span className="flex items-center gap-1 text-xs text-gray-500 whitespace-nowrap">
                                     <Calendar className="w-3 h-3" />
                                     {new Date(task.dueDate).toLocaleString()}
                                 </span>

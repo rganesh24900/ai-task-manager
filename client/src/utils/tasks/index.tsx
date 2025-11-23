@@ -54,7 +54,7 @@ export const getStatusBadge = (status: string) => {
             );
         case "IN_PROGRESS":
             return (
-                <span className="flex items-center gap-1 px-2 py-1 bg-blue-100 text-blue-700 text-xs rounded-md font-medium">
+                <span title="In Progress" className="flex items-center gap-1 px-2 py-1 bg-blue-100 text-blue-700 text-xs rounded-md font-medium max-sm:max-w-14 truncate">
                     <Timer className="w-3 h-3" /> In Progress
                 </span>
             );
