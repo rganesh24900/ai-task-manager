@@ -49,7 +49,7 @@ export const register = async (req: Request, res: Response) => {
         // 6️⃣ Set cookie
         res.cookie("token", token, {
             httpOnly: true,
-            sameSite: "lax",
+            sameSite: "none",
             secure: process.env.NODE_ENV === "production",
             maxAge: 1000 * 60 * 60,
         });
@@ -82,7 +82,7 @@ export const login = async (req: Request, res: Response) => {
         const token = signJWT({ userId: user.id, email: user.email })
         res.cookie("token", token, {
             httpOnly: true,
-            sameSite: "lax",
+            sameSite: "none",
             secure: process.env.NODE_ENV === "production",
             maxAge: 1000 * 60 * 60,
         });
