@@ -29,10 +29,6 @@ const TaskBreakdown = ({ stats }: {
         <PieChart width={350} height={280}>
             <Pie
                 data={safeData}
-                cx="50%"
-                cy="50%"
-                outerRadius={110}
-                paddingAngle={3}
                 dataKey="value"
             >
                 {safeData.map((_, i) => (
