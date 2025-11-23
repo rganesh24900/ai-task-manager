@@ -18,14 +18,12 @@ const Navbar = () => {
 
     return (
         <nav className="w-full bg-[#fafafa] border-b px-6 py-3 flex justify-between items-center relative">
-            {/* Logo */}
             <Link to="/">
                 <h1 className="text-xl font-bold text-gray-900 tracking-tight cursor-pointer">
-                    AI Task Manager
+                    Karam<span className="font-semibold">क्रिया</span>
                 </h1>
             </Link>
 
-            {/* Desktop Menu */}
             <div className="hidden md:flex gap-4 items-center">
                 <NavLink to="/" className={linkClass}>
                     Home Page
@@ -41,7 +39,6 @@ const Navbar = () => {
                 </Button>
             </div>
 
-            {/* Mobile Menu Button */}
             <button
                 className="md:hidden p-2 rounded-lg hover:bg-gray-100"
                 onClick={() => setOpen(!open)}
@@ -49,7 +46,6 @@ const Navbar = () => {
                 {open ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
             </button>
 
-            {/* Mobile Dropdown */}
             {open && (
                 <div className="absolute top-full left-0 w-full bg-white border-b shadow-md md:hidden p-4 flex flex-col gap-3 z-50">
                     <NavLink
