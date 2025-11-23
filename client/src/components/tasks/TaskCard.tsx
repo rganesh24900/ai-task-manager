@@ -1,4 +1,3 @@
-import React from 'react'
 import type { ActionType, Task } from '../../types'
 import Button from '../../common/components/Button'
 import { Calendar, Trash } from 'lucide-react'

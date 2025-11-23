@@ -48,7 +48,7 @@ export const getStatusBadge = (status: string) => {
     switch (status) {
         case "TODO":
             return (
-                <span className="flex items-center gap-1 px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded-md font-medium">
+                <span className="flex items-center gap-1 px-2 ppy-1 bg-gray-100 text-gray-700 text-xs rounded-md font-medium">
                     <Circle className="w-3 h-3" /> TODO
                 </span>
             );

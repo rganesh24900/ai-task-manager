@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from "react";
+import React, { useState, useMemo } from "react";
 import Button from "../../common/components/Button";
 import { useTaskPopup } from "../../hooks/tasks/useTaskPopup";
 import useTasks from "../../hooks/tasks/useTasks";

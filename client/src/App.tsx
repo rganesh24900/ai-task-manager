@@ -4,7 +4,6 @@ import Register from "./pages/Register";
 import TaskList from "./components/tasks/TaskList";
 import Layout from "./components/auth/Layout";
 import TaskBoard from "./components/tasks/TaskBoard";
-import ReminderBar from "./common/components/ReminderBar";
 
 function App() {
   return (
