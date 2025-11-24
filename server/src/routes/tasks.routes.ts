@@ -20,17 +20,31 @@ router.post("/", requireAuth, async (req: AuthedRequest, res) => {
         if (!userId) {
             return res.status(401).json({ error: "Unauthorized" });
         }
-        const { title, description, dueDate, priority } = req.body?.data
+
+        const { title, description, dueDate, priority } = req.body?.data;
+
         const task = await prisma.task.create({
-            data: { userId, title, description, dueDate: dueDate ? new Date(dueDate) : null, priority }
-        })
+            data: {
+                title,
+                description,
+                dueDate: dueDate ? new Date(dueDate) : null,
+
+                user: {
+                    connect: { id: userId },
+                },
+
+                priority: priority ?? "Low",
+            },
+        });
+
         return res.status(201).json(task);
     } catch (error) {
-        console.error("Error in create task : ", error)
-        res.status(500).json({ error: 'Failed to create task' });
+        console.error("Error in create task : ", error);
+        res.status(500).json({ error: "Failed to create task" });
     }
+});
 
-})
+
 
 router.put("/:id", requireAuth, updateTask)
 
